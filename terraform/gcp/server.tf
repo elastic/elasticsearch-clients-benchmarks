@@ -1,5 +1,5 @@
 resource "google_compute_instance" "server" {
-  name         = "bench-server-${random_id.build_id.hex}"
+  name         = "bench-server-${random_id.build_id.hex}-${random_id.server_id[count.index].hex}"
   description  = "bench-server-${local.client_id}-${format("%03d", count.index + 1)}"
   machine_type = var.instance_type_server
 
@@ -16,7 +16,9 @@ resource "google_compute_instance" "server" {
   }
 
   network_interface {
-    network = google_compute_network.vpc_network.self_link
+    network    = google_compute_network.default.self_link
+    subnetwork = google_compute_subnetwork.default.self_link
+    network_ip = count.index == 0 ? google_compute_address.master.address : null
     access_config {}
   }
 
@@ -28,15 +30,10 @@ resource "google_compute_instance" "server" {
     client_id = local.client_id
   }
 
-  metadata_startup_script = data.template_file.setup_server[count.index].rendered
-}
-
-data "template_file" "setup_server" {
-  template = file("${path.module}/scripts/setup-server.sh")
-  count    = var.server_count
-  vars = {
-    build_id  = random_id.build_id.hex
-    client_id = local.client_id
-    server_nr = count.index + 1
-  }
+  metadata_startup_script = templatefile("${path.module}/scripts/setup-server.sh", {
+    build_id  = random_id.build_id.hex,
+    client_id = local.client_id,
+    server_nr = count.index + 1,
+    master_ip = google_compute_address.master.address,
+  })
 }

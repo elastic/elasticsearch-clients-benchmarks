@@ -12,9 +12,9 @@ output "server_private_ips" {
   ]
 }
 
-output "server_gcloud_ssh_commands" {
+output "server_instance_names" {
   value = [
     for instance in google_compute_instance.server :
-    "gcloud beta compute ssh --zone '${var.instance_zone}' '${instance.name}' --project 'elastic-clients'"
+    instance.name
   ]
 }
