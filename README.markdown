@@ -8,5 +8,6 @@
 export GOOGLE_CLOUD_KEYFILE_JSON=/.../elastic-clients-123def456.json
 
 cd terraform/gcp
-terraform apply
+terraform plan -var client_repository_url=https://github.com/elastic/go-elasticsearch
+terraform apply -var client_repository_url=https://github.com/elastic/go-elasticsearch
 ```
