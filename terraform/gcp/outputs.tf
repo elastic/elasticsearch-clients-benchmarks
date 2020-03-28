@@ -1,3 +1,7 @@
+output "build_id" {
+  value = random_id.build.hex
+}
+
 output "server_public_ips" {
   value = [
     for instance in google_compute_instance.server :

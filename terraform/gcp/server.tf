@@ -1,9 +1,9 @@
 resource "google_compute_instance" "server" {
-  name         = "bench-server-${random_id.build_id.hex}-${random_id.server_id[count.index].hex}"
+  name         = "bench-server-${random_id.build.hex}-${random_id.server_instance[count.index].hex}"
   description  = "bench-server-${local.client_id}-${format("%03d", count.index + 1)}"
   machine_type = var.instance_type_server
 
-  count = var.server_count
+  count = var.node_count
 
   boot_disk {
     initialize_params {
@@ -31,7 +31,7 @@ resource "google_compute_instance" "server" {
   }
 
   metadata_startup_script = templatefile("${path.module}/scripts/setup-server.sh", {
-    build_id  = random_id.build_id.hex,
+    build_id  = random_id.build.hex,
     client_id = local.client_id,
     server_nr = count.index + 1,
     master_ip = google_compute_address.master.address,

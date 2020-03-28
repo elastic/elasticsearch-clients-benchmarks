@@ -4,11 +4,11 @@ provider "google" {
   zone    = var.instance_zone
 }
 
-resource "random_id" "build_id" {
+resource "random_id" "build" {
   byte_length = 8
 }
 
-resource "random_id" "server_id" {
-  count       = var.server_count
+resource "random_id" "server_instance" {
+  count       = var.node_count
   byte_length = 8
 }

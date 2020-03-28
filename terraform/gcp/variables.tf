@@ -9,14 +9,14 @@ variable "client_repository_url" {
   }
 }
 
-variable "server_count" {
+variable "node_count" {
   type        = number
   description = "The number of Elasticsearch nodes in the cluster"
   default     = 1
 }
 
 variable "instance_type_server" {
-  description = "The instance type"
+  description = "The instance type for Elasticsearch nodes"
   default     = "n2-standard-8"
 }
 
