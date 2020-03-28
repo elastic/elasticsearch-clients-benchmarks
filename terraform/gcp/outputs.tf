@@ -2,6 +2,21 @@ output "build_id" {
   value = random_id.build.hex
 }
 
+output "cluster_urls" {
+  value = [
+    for instance in google_compute_instance.server :
+    "http://${instance.network_interface.0.network_ip}:9200"
+  ]
+}
+
+output "master_ip" {
+  value = google_compute_address.master.address
+}
+
+output "runner_instance_name" {
+  value = google_compute_instance.runner.name
+}
+
 output "server_public_ips" {
   value = [
     for instance in google_compute_instance.server :

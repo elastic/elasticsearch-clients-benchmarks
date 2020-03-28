@@ -11,7 +11,7 @@ cd terraform/gcp
 terraform plan --var client_repository_url=https://github.com/elastic/go-elasticsearch --var node_count=3
 terraform apply --var client_repository_url=https://github.com/elastic/go-elasticsearch --var node_count=3
 
-gcloud compute --project 'elastic-clients' ssh $(terraform output --json server_instance_names | jq -r '.[0]') --command='curl -s http://localhost:9200/_cat/nodes?v'
+gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instance_name) --command="curl -s '$(terraform output --json cluster_urls | jq -r '.[0]')/_cat/nodes?v&h=name,ip,master'"
 
 terraform destroy --var client_repository_url=https://github.com/elastic/go-elasticsearch
 ```

@@ -20,6 +20,11 @@ variable "instance_type_server" {
   default     = "n2-standard-8"
 }
 
+variable "instance_type_runner" {
+  description = "The instance type for the client runner"
+  default     = "t1-micro"
+}
+
 variable "instance_image" {
   description = "The instance OS image"
   default     = "ubuntu-1804-lts"

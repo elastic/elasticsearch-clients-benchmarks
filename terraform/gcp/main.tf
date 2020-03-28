@@ -12,3 +12,7 @@ resource "random_id" "server_instance" {
   count       = var.node_count
   byte_length = 8
 }
+
+resource "random_id" "runner" {
+  byte_length = 8
+}
