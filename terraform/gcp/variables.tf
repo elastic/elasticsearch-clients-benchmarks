@@ -1,11 +1,11 @@
-# Pass on the command line with -var client_repository_url=https://github.com/elastic/foo
-variable "client_repository_url" {
+# Pass on the command line with -var client_image=https://github.com/elastic/foo
+variable "client_image" {
   type        = string
-  description = "The Elasticsearch language client Github repository URL"
+  description = "The fully qualified Docker image with the Elasticsearch language client"
 
   validation {
-    condition     = can(regex("^https://github.com/elastic/.+", var.client_repository_url))
-    error_message = "The client_repository_url value must point to a Github repository in the @elastic organization."
+    condition     = can(regex("[[:ascii:]]:[[:alnum:]]+$", var.client_image))
+    error_message = "The value must contain a fully qualified Docker image: <NAME>:<TAG>."
   }
 }
 
@@ -41,5 +41,9 @@ variable "instance_zone" {
 }
 
 locals {
-  client_id = replace(var.client_repository_url, "https://github.com/elastic/", "")
+  client_image_parts = split("/", var.client_image)
+  client_image_name  = local.client_image_parts[length(local.client_image_parts) - 1]
+
+  client_name   = regex("([[:ascii:]]+):.+", local.client_image_name)[0]
+  client_commit = regex(".+:([[:alnum:]]+)", local.client_image_name)[0]
 }

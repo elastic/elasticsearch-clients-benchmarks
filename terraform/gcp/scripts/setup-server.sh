@@ -41,7 +41,7 @@ su - elasticsearch -c '
   ES_JAVA_OPTS="-Xms4g -Xmx4g -Des.enforce.bootstrap.checks=true" \
     /home/elasticsearch/elasticsearch-7.6.0/bin/elasticsearch \
       -E node.name=es-${format("%03d", server_nr)} \
-      -E cluster.name=bench-${client_id}-${build_id} \
+      -E cluster.name=bench-${client_name}-${build_id} \
       -E cluster.initial_master_nodes=${master_ip} \
       -E discovery.seed_hosts=${master_ip} \
       -E network.host=_local_,_site_ \

@@ -1,6 +1,6 @@
 resource "google_compute_instance" "server" {
   name         = "bench-server-${random_id.build.hex}-${random_id.server_instance[count.index].hex}"
-  description  = "bench-server-${local.client_id}-${format("%03d", count.index + 1)}"
+  description  = "bench-server-${local.client_name}-${format("%03d", count.index + 1)}"
   machine_type = var.instance_type_server
 
   count = var.node_count
@@ -25,15 +25,17 @@ resource "google_compute_instance" "server" {
   tags = ["allow-ssh"]
 
   labels = {
-    group     = "bench"
-    role      = "server"
-    client_id = local.client_id
+    group       = "bench"
+    role        = "server"
+    client_name = local.client_name
   }
 
   metadata_startup_script = templatefile("${path.module}/scripts/setup-server.sh", {
-    build_id  = random_id.build.hex,
-    client_id = local.client_id,
-    server_nr = count.index + 1,
-    master_ip = google_compute_address.master.address,
+    build_id      = random_id.build.hex,
+    client_image  = var.client_image,
+    client_name   = local.client_name,
+    client_commit = local.client_commit,
+    server_nr     = count.index + 1,
+    master_ip     = google_compute_address.master.address,
   })
 }

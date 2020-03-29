@@ -2,6 +2,18 @@ output "build_id" {
   value = random_id.build.hex
 }
 
+output "client_image" {
+  value = var.client_image
+}
+
+output "client_name" {
+  value = local.client_name
+}
+
+output "client_commit" {
+  value = local.client_commit
+}
+
 output "cluster_urls" {
   value = [
     for instance in google_compute_instance.server :
