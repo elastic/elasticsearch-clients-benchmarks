@@ -17,14 +17,6 @@ EOF
 
 chown -R runner:runner /home/runner/*
 
-curl -# -O https://dl.google.com/go/go1.14.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.14.linux-amd64.tar.gz
-
-sudo su - runner
-echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/runner/.profile
-source /home/runner/.profile
-go version
-
 apt-get update --fix-missing
 
 apt-get install jq --yes
@@ -37,6 +29,10 @@ usermod -aG docker runner
 newgrp docker
 
 gcloud auth configure-docker --quiet
+# TODO(karmi): Investigate why this fix is needed
 sudo ln -s /snap/google-cloud-sdk/122/bin/docker-credential-gcloud /snap/bin/docker-credential-gcloud
 
 docker pull ${client_image}
+
+docker pull eu.gcr.io/elastic-clients/benchmarks-data
+docker create --name benchmarks-data --volume /benchmarks-data --name benchmarks-data eu.gcr.io/elastic-clients/benchmarks-data /bin/true

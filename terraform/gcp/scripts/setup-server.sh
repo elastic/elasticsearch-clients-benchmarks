@@ -20,14 +20,17 @@ swapoff -a
 sysctl -w vm.swappiness=1
 sysctl -w fs.file-max=262144
 sysctl -w vm.max_map_count=262144
-su -c "cat >> /etc/security/limits.conf <<EOF
+cat >> /etc/security/limits.conf <<EOF
 elasticsearch soft memlock unlimited
 elasticsearch hard memlock unlimited
 elasticsearch soft nofile 65535
 elasticsearch hard nofile 65535
 elasticsearch soft nproc 4096
 elasticsearch hard nproc 4096
-EOF"
+EOF
+
+chmod -x /etc/update-motd.d/*
+chmod +x /etc/update-motd.d/00*
 
 cd /home/elasticsearch/
 curl -# -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${elasticsearch_version}-linux-x86_64.tar.gz
@@ -41,7 +44,7 @@ su - elasticsearch -c '
   ES_JAVA_OPTS="-Xms4g -Xmx4g -Des.enforce.bootstrap.checks=true" \
     /home/elasticsearch/elasticsearch-${elasticsearch_version}/bin/elasticsearch \
       -E node.name=es-${format("%03d", server_nr)} \
-      -E cluster.name=bench-${client_name}-${build_id} \
+      -E cluster.name=bench-${build_id} \
       -E cluster.initial_master_nodes=${master_ip} \
       -E discovery.seed_hosts=${master_ip} \
       -E network.host=_local_,_site_ \
