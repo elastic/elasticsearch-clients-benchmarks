@@ -30,8 +30,8 @@ elasticsearch hard nproc 4096
 EOF"
 
 cd /home/elasticsearch/
-curl -# -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.0-linux-x86_64.tar.gz
-tar -xf elasticsearch-7.6.0-linux-x86_64.tar.gz
+curl -# -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${elasticsearch_version}-linux-x86_64.tar.gz
+tar -xf elasticsearch-${elasticsearch_version}-linux-x86_64.tar.gz
 
 chown -R elasticsearch:elasticsearch /home/elasticsearch/*
 
@@ -39,7 +39,7 @@ chown -R elasticsearch:elasticsearch /home/elasticsearch/*
 
 su - elasticsearch -c '
   ES_JAVA_OPTS="-Xms4g -Xmx4g -Des.enforce.bootstrap.checks=true" \
-    /home/elasticsearch/elasticsearch-7.6.0/bin/elasticsearch \
+    /home/elasticsearch/elasticsearch-${elasticsearch_version}/bin/elasticsearch \
       -E node.name=es-${format("%03d", server_nr)} \
       -E cluster.name=bench-${client_name}-${build_id} \
       -E cluster.initial_master_nodes=${master_ip} \

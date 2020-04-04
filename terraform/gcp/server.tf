@@ -32,11 +32,12 @@ resource "google_compute_instance" "server" {
   }
 
   metadata_startup_script = templatefile("${path.module}/scripts/setup-server.sh", {
-    build_id      = random_id.build.hex,
-    client_image  = var.client_image,
-    client_name   = local.client_name,
-    client_commit = local.client_commit,
-    server_nr     = count.index + 1,
-    master_ip     = google_compute_address.master.address,
+    build_id              = random_id.build.hex,
+    elasticsearch_version = var.elasticsearch_version,
+    client_image          = var.client_image,
+    client_name           = local.client_name,
+    client_commit         = local.client_commit,
+    server_nr             = count.index + 1,
+    master_ip             = google_compute_address.master.address,
   })
 }

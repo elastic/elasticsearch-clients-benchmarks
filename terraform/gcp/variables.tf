@@ -9,6 +9,11 @@ variable "client_image" {
   }
 }
 
+variable "elasticsearch_version" {
+  description = "The Elasticsearch version"
+  default     = "7.6.0"
+}
+
 variable "node_count" {
   type        = number
   description = "The number of Elasticsearch nodes in the cluster"
