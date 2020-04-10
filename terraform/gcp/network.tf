@@ -20,7 +20,7 @@ resource "google_compute_address" "master" {
 }
 
 resource "google_compute_firewall" "allow-internal" {
-  name        = "bench-allow-internal"
+  name        = "${google_compute_network.default.name}-allow-internal"
   description = "Allow internal traffic"
   network     = google_compute_network.default.self_link
 
@@ -37,7 +37,7 @@ resource "google_compute_firewall" "allow-internal" {
 }
 
 resource "google_compute_firewall" "allow-ssh" {
-  name        = "bench-allow-ssh"
+  name        = "${google_compute_network.default.name}-allow-ssh"
   description = "Allow SSH from external"
   network     = google_compute_network.default.self_link
 
