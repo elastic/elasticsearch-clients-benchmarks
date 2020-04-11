@@ -20,7 +20,7 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Conten
       },
       "client.name": {
         "terms": {
-          "field": "labels.client"
+          "field": "benchmark.runner.service.name"
         }
       },
       "@timestamp": {
