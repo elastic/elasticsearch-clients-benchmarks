@@ -23,7 +23,7 @@ resource "google_compute_instance" "runner" {
     client_name = local.client_name
   }
 
-  metadata_startup_script = templatefile("${path.module}/scripts/setup-runner.sh", {
+  metadata_startup_script = templatefile("${path.module}/setup/runner/startup.sh", {
     build_id      = random_id.build.hex,
     client_image  = var.client_image,
     client_name   = local.client_name,
