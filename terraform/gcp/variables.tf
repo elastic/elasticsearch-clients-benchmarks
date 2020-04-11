@@ -1,4 +1,5 @@
 # Pass on the command line with -var client_image=https://github.com/elastic/foo
+#
 variable "client_image" {
   type        = string
   description = "The fully qualified Docker image with the Elasticsearch language client"
@@ -9,9 +10,17 @@ variable "client_image" {
   }
 }
 
+# Pass on the command line with -var reporting={url: https://...cloud.es.io:9243, password: foo}
+#
+variable "reporting" {
+  type        = map(string)
+  description = "Credentials and configurations for the reporting cluster"
+  default     = { "username" : "elastic" }
+}
+
 variable "elasticsearch_version" {
   description = "The Elasticsearch version"
-  default     = "7.6.0"
+  default     = "7.6.2"
 }
 
 variable "node_count" {

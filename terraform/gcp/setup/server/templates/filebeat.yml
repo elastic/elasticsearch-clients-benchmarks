@@ -1,0 +1,18 @@
+filebeat.modules:
+  - module: system
+    syslog: { var: { paths: ["/var/log/syslog*"] }}
+  - module: elasticsearch
+    server:  { var: { paths: ["/home/elasticsearch/elasticsearch-*/logs/*_server.json"] }}
+    slowlog: { var: { paths: ["/home/elasticsearch/elasticsearch-*/logs/*_slowlog.json"] }}
+    gc:      { var: { paths: ["/home/elasticsearch/elasticsearch-*/logs/gc.log*"] }}
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+
+tags: ['bench', 'gcp', '${client_name}']
+
+output.elasticsearch:
+  hosts: ["${reporting_elasticsearch_url}"]
+  username: '${reporting_elasticsearch_username}'
+  password: '${reporting_elasticsearch_password}'

@@ -39,5 +39,28 @@ resource "google_compute_instance" "server" {
     client_commit         = local.client_commit,
     server_nr             = count.index + 1,
     master_ip             = google_compute_address.master.address,
+
+    metricbeat_config = data.template_file.metricbeat_config.rendered,
+    filebeat_config   = data.template_file.filebeat_config.rendered,
   })
+}
+
+data "template_file" "metricbeat_config" {
+  template = file("${path.module}/setup/server/templates/metricbeat.yml")
+  vars = {
+    client_name                      = local.client_name
+    reporting_elasticsearch_url      = var.reporting.url
+    reporting_elasticsearch_password = var.reporting.password
+    reporting_elasticsearch_username = lookup(var.reporting, "username", "elastic")
+  }
+}
+
+data "template_file" "filebeat_config" {
+  template = file("${path.module}/setup/server/templates/filebeat.yml")
+  vars = {
+    client_name                      = local.client_name
+    reporting_elasticsearch_url      = var.reporting.url
+    reporting_elasticsearch_password = var.reporting.password
+    reporting_elasticsearch_username = lookup(var.reporting, "username", "elastic")
+  }
 }
