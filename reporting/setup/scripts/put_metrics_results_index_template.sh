@@ -18,9 +18,9 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
     "dynamic": "false",
 
     "dynamic_templates": [
-      { "labels": {
+      { "keywords": {
         "match_mapping_type": "string",
-        "path_match":   "labels.*,client.*",
+        "path_match":   "client.*,target.*",
         "mapping": { "type": "keyword" }
       }}
     ],
@@ -30,14 +30,16 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
         "type": "date"
       },
 
-      "action" : {
-        "type" : "keyword"
+      "action": {
+        "type": "keyword"
       },
 
-      "client" : {
-        "properties": {
-          "name": { "type" : "keyword" }
-        }
+      "client": {
+        "type": "object"
+      },
+
+      "target": {
+        "type": "object"
       },
 
       "duration" : {
@@ -58,16 +60,7 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
         }
       },
 
-      "benchmark": {
-        "properties": {
-          "iterations":  { "type": "long", "index": false },
-          "repetitions": { "type": "long", "index": false },
-          "warmups":     { "type": "long", "index": false }
-        }
-      },
-
-      "tags" : { "type" : "keyword" },
-      "labels" : { "type" : "object", "dynamic": true }
+      "tags" : { "type" : "keyword" }
     }
   }
 }
