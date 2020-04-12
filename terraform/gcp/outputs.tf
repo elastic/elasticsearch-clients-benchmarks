@@ -15,10 +15,7 @@ output "client_commit" {
 }
 
 output "cluster_urls" {
-  value = [
-    for instance in google_compute_instance.server :
-    "http://${instance.network_interface.0.network_ip}:9200"
-  ]
+  value = local.cluster_urls
 }
 
 output "master_ip" {

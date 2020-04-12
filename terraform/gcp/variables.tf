@@ -55,9 +55,16 @@ variable "instance_zone" {
 }
 
 locals {
+  runner_instance_name = "bench-runner-${random_id.build.hex}-${random_id.runner.hex}"
+
   client_image_parts = split("/", var.client_image)
   client_image_name  = local.client_image_parts[length(local.client_image_parts) - 1]
 
   client_name   = regex("([[:ascii:]]+):.+", local.client_image_name)[0]
   client_commit = regex(".+:([[:alnum:]]+)", local.client_image_name)[0]
+
+  cluster_urls = [
+    for instance in google_compute_instance.server :
+    "http://${instance.network_interface.0.network_ip}:9200"
+  ]
 }
