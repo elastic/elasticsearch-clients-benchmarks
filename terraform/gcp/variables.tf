@@ -31,12 +31,12 @@ variable "node_count" {
 
 variable "instance_type_server" {
   description = "The instance type for Elasticsearch nodes"
-  default     = "n2-standard-8"
+  default     = "n2-standard-4"
 }
 
 variable "instance_type_runner" {
   description = "The instance type for the client runner"
-  default     = "t1-micro"
+  default     = "n2-standard-2"
 }
 
 variable "instance_image" {
