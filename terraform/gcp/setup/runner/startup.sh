@@ -7,6 +7,21 @@ useradd -d /home/runner -k /etc/skel -m -s /bin/bash -U runner
 echo "Defaults:runner !requiretty" > /etc/sudoers.d/runner
 echo "runner ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers.d/runner
 
+# ----- Configure system limits
+swapoff -a
+sysctl -w vm.swappiness=1
+sysctl -w fs.file-max=262144
+sysctl -w vm.max_map_count=262144
+cat >> /etc/security/limits.conf <<EOF
+elasticsearch - memlock unlimited
+elasticsearch - nofile  500000
+elasticsearch - nproc   unlimited
+EOF
+systemctl disable fstrim
+systemctl stop fstrim
+echo "always" > /sys/kernel/mm/transparent_hugepage/enabled
+echo "always" > /sys/kernel/mm/transparent_hugepage/defrag
+
 # ----- Download metadata about the commit
 curl -sSL --retry 10 --retry-max-time 30 https://api.github.com/repos/elastic/${client_name}/commits/${client_commit} > /home/runner/commit.json
 

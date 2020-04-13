@@ -14,7 +14,7 @@ mkdir -p /mnt/disks/data
 mount /dev/nvme0n1 /mnt/disks/data
 chmod a+w /mnt/disks/data/
 chown -R elasticsearch:elasticsearch /mnt/disks/data/
-echo UUID=$(blkid -s UUID -o value /dev/disk/by-id/google-local-ssd-0) /mnt/disks/data ext4 discard,defaults,nofail,nobarrier 0 2 | tee -a /etc/fstab
+echo UUID=$(blkid -s UUID -o value /dev/disk/by-id/google-local-ssd-0) /mnt/disks/data ext4 defaults,nofail,nobarrier 0 2 | tee -a /etc/fstab
 mkdir -p /mnt/disks/data/elasticsearch
 chown -R elasticsearch:elasticsearch /mnt/disks/data/elasticsearch
 
@@ -24,13 +24,14 @@ sysctl -w vm.swappiness=1
 sysctl -w fs.file-max=262144
 sysctl -w vm.max_map_count=262144
 cat >> /etc/security/limits.conf <<EOF
-elasticsearch soft memlock unlimited
-elasticsearch hard memlock unlimited
-elasticsearch soft nofile 65535
-elasticsearch hard nofile 65535
-elasticsearch soft nproc 4096
-elasticsearch hard nproc 4096
+elasticsearch - memlock unlimited
+elasticsearch - nofile  500000
+elasticsearch - nproc   unlimited
 EOF
+systemctl disable fstrim
+systemctl stop fstrim
+echo "always" > /sys/kernel/mm/transparent_hugepage/enabled
+echo "always" > /sys/kernel/mm/transparent_hugepage/defrag
 
 # ----- Prune the SSH welcome messages
 chmod -x /etc/update-motd.d/*
