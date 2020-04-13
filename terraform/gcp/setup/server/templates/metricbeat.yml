@@ -11,6 +11,7 @@ metricbeat.modules:
 processors:
   - add_host_metadata: ~
   - add_cloud_metadata: ~
+  - add_labels: { labels: { build_id: '${build_id}' } }
 
 tags: ['bench', 'gcp', '${client_name}']
 

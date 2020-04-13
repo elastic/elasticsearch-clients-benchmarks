@@ -48,6 +48,7 @@ resource "google_compute_instance" "server" {
 data "template_file" "metricbeat_config" {
   template = file("${path.module}/setup/server/templates/metricbeat.yml")
   vars = {
+    build_id                         = random_id.build.hex
     client_name                      = local.client_name
     reporting_elasticsearch_url      = var.reporting_url
     reporting_elasticsearch_username = var.reporting_username
@@ -58,6 +59,7 @@ data "template_file" "metricbeat_config" {
 data "template_file" "filebeat_config" {
   template = file("${path.module}/setup/server/templates/filebeat.yml")
   vars = {
+    build_id                         = random_id.build.hex
     client_name                      = local.client_name
     reporting_elasticsearch_url      = var.reporting_url
     reporting_elasticsearch_username = var.reporting_username
