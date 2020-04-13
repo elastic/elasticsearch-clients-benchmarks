@@ -49,9 +49,9 @@ data "template_file" "metricbeat_config" {
   template = file("${path.module}/setup/server/templates/metricbeat.yml")
   vars = {
     client_name                      = local.client_name
-    reporting_elasticsearch_url      = var.reporting.url
-    reporting_elasticsearch_password = var.reporting.password
-    reporting_elasticsearch_username = lookup(var.reporting, "username", "elastic")
+    reporting_elasticsearch_url      = var.reporting_url
+    reporting_elasticsearch_username = var.reporting_username
+    reporting_elasticsearch_password = var.reporting_password
   }
 }
 
@@ -59,8 +59,8 @@ data "template_file" "filebeat_config" {
   template = file("${path.module}/setup/server/templates/filebeat.yml")
   vars = {
     client_name                      = local.client_name
-    reporting_elasticsearch_url      = var.reporting.url
-    reporting_elasticsearch_password = var.reporting.password
-    reporting_elasticsearch_username = lookup(var.reporting, "username", "elastic")
+    reporting_elasticsearch_url      = var.reporting_url
+    reporting_elasticsearch_username = var.reporting_username
+    reporting_elasticsearch_password = var.reporting_password
   }
 }

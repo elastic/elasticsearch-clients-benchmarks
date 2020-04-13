@@ -8,11 +8,14 @@ export GOOGLE_CLOUD_KEYFILE_JSON=/.../elastic-clients-123def456.json
 export ELASTICSEARCH_REPORT_URL=https://...@...gcp.cloud.es.io:9243
 export ELASTICSEARCH_REPORT_PASSWORD=...
 
+export TF_VAR_reporting_url="$ELASTICSEARCH_REPORT_URL"
+export TF_VAR_reporting_password="$ELASTICSEARCH_REPORT_PASSWORD"
+
 export CLIENT_IMAGE="eu.gcr.io/elastic-clients/go-elasticsearch:9c97913f"
 
 cd terraform/gcp
-terraform plan --var client_image="$CLIENT_IMAGE" --var 'reporting={"url": "$ELASTICSEARCH_REPORT_URL", "password": "$ELASTICSEARCH_REPORT_PASSWORD"}'
-terraform apply --var client_image="$CLIENT_IMAGE" --var 'reporting={"url": "$ELASTICSEARCH_REPORT_URL", "password": "$ELASTICSEARCH_REPORT_PASSWORD"}'
+terraform plan --var client_image="$CLIENT_IMAGE"
+terraform apply --var client_image="$CLIENT_IMAGE"
 
 gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instance_name) \
   --zone 'europe-west1-b' \
@@ -37,9 +40,9 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
 # >  [ping]          1000×     mean=0s runner=success report=success
 # >  ...
 
-export CLIENT_IMAGE="eu.gcr.io/elastic-clients/elasticsearch-ruby:b5764652"
+export CLIENT_IMAGE="eu.gcr.io/elastic-clients/elasticsearch-ruby:253a0ffc"
 
-terraform apply --var client_image="$CLIENT_IMAGE" --var 'reporting={"url": "$ELASTICSEARCH_REPORT_URL", "password": "$ELASTICSEARCH_REPORT_PASSWORD"}'
+terraform apply --var client_image="$CLIENT_IMAGE"
 
 gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instance_name) \
   --zone='europe-west1-b' \
@@ -57,7 +60,7 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
 # >  [ping]          1000x     mean=1ms runner=success report=success
 # > ...
 
-terraform destroy --var client_image="$CLIENT_IMAGE" --var 'reporting={"url": "$ELASTICSEARCH_REPORT_URL", "password": "$ELASTICSEARCH_REPORT_PASSWORD"}'
+terraform destroy --var client_image="$CLIENT_IMAGE"
 ```
 
 -----
