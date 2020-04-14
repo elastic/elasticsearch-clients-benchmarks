@@ -10,7 +10,7 @@ if [[ ! -z $FORCE ]]; then
   curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
 fi
 
-curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Content-Type: application/json' -d'
+curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Content-Type: application/json' -d @-<<EOF
 {
   "source": {
     "index": [
@@ -98,6 +98,14 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
         "max": {
           "field": "event.duration"
         }
+      },
+      "ops_per_sec": {
+        "scripted_metric": {
+          "init_script": "state.ops_per_sec = 0",
+          "map_script": "state.ops_per_sec = (int)(params['_source']['benchmark']['repetitions'] / (params['_source']['benchmark']['duration']/1e+9))",
+           "combine_script" : "int ops_per_sec = 0; ops_per_sec = state.ops_per_sec; return ops_per_sec",
+           "reduce_script" : "int ops_per_sec = 0; for (s in states) { ops_per_sec = s } return ops_per_sec"
+        }
       }
     }
   },
@@ -107,7 +115,7 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
     }
   }
 }
-'
+EOF
 
 curl -ksS -X PUT "$ELASTICSEARCH_URL/metrics-results?pretty"
 curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_start?pretty"
