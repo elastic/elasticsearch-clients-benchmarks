@@ -37,7 +37,7 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
       "@timestamp": {
         "date_histogram": {
           "field": "@timestamp",
-          "calendar_interval": "1h"
+          "fixed_interval": "15m"
         }
       },
 

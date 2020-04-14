@@ -4,6 +4,12 @@ if [[ -z $ELASTICSEARCH_URL ]]; then
   echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_URL] not set\033[0m"; exit 1
 fi
 
+if [[ ! -z $FORCE ]]; then
+  curl -ksS -X DELETE "$ELASTICSEARCH_URL/_template/metrics-results?pretty"
+  curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
+  curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_stop?pretty"
+fi
+
 curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content-Type: application/json' -d'
 {
   "index_patterns": [
@@ -30,12 +36,24 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
         "type": "date"
       },
 
+      "build_id": {
+        "type": "keyword"
+      },
+
       "action": {
         "type": "keyword"
       },
 
       "client": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "keyword"
+          },
+          "version": {
+            "type": "keyword"
+          }
+        }
       },
 
       "target": {
@@ -50,14 +68,8 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
         }
       },
 
-      "http" : {
-        "properties" : {
-          "response" : {
-            "properties" : {
-              "status_code" : { "type" : "short" }
-            }
-          }
-        }
+      "ops_per_sec": {
+        "type": "integer"
       },
 
       "tags" : { "type" : "keyword" }
@@ -65,3 +77,8 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
   }
 }
 '
+
+if [[ ! -z $FORCE ]]; then
+  curl -ksS -X PUT "$ELASTICSEARCH_URL/metrics-results?pretty"
+  curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_start?pretty"
+fi
