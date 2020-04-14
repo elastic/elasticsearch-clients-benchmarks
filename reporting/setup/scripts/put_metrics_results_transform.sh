@@ -101,10 +101,10 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
       },
       "ops_per_sec": {
         "scripted_metric": {
-          "init_script": "state.ops_per_sec = 0",
-          "map_script": "state.ops_per_sec = (int)(params['_source']['benchmark']['repetitions'] / (params['_source']['benchmark']['duration']/1e+9))",
-           "combine_script" : "int ops_per_sec = 0; ops_per_sec = state.ops_per_sec; return ops_per_sec",
-           "reduce_script" : "int ops_per_sec = 0; for (s in states) { ops_per_sec = s } return ops_per_sec"
+          "init_script": "state.total_duration = 0.0; state.total_repetitions = 0.0",
+          "map_script": "state.total_duration += params['_source']['event']['duration'];  state.total_repetitions += 1",
+           "combine_script" : "return state.total_repetitions / (state.total_duration / 1e9)",
+           "reduce_script" : "double ops_per_sec = 0; for (s in states) { ops_per_sec += s } return ops_per_sec"
         }
       }
     }
