@@ -63,9 +63,10 @@ usermod -aG docker runner
 newgrp docker
 
 # ----- Configure access to Google Container Registry
-gcloud auth configure-docker --quiet
-# TODO(karmi): Investigate why this fix is needed
-sudo ln -s /snap/google-cloud-sdk/122/bin/docker-credential-gcloud /snap/bin/docker-credential-gcloud
+ln -s /snap/google-cloud-sdk/current/bin/docker-credential-gcloud /usr/local/bin/
+gcloud auth configure-docker eu.gcr.io --quiet
+# TODO: This shouldn't be needed...
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
 
 # ----- Pull the client Docker image
 docker pull ${client_image}
