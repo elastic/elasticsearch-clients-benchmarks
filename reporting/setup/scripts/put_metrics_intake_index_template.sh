@@ -53,8 +53,8 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-intake?pretty" -H 'Content-
       "benchmark": {
         "properties": {
           "build_id": { "type": "keyword" },
-          "duration": { "type": "long", "index": false },
-          "warmups": { "type": "long", "index": false },
+          "category": { "type": "keyword" },
+          "environment": { "type": "keyword" },
           "repetitions": { "type": "long", "index": false },
           "runner": {
             "properties": {

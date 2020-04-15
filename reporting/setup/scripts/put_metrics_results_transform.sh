@@ -5,8 +5,7 @@ if [[ -z $ELASTICSEARCH_URL ]]; then
 fi
 
 if [[ ! -z $FORCE ]]; then
-  curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_stop?pretty"
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/_transform/metrics-results?pretty"
+  curl -ksS -X DELETE "$ELASTICSEARCH_URL/_transform/metrics-results?force=true&pretty"
   curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
 fi
 
@@ -22,6 +21,13 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
   },
   "pivot": {
     "group_by": {
+      "@timestamp": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "15m"
+        }
+      },
+
       "build_id": {
         "terms": {
           "field": "benchmark.build_id"
@@ -34,10 +40,15 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
         }
       },
 
-      "@timestamp": {
-        "date_histogram": {
-          "field": "@timestamp",
-          "fixed_interval": "15m"
+      "category": {
+        "terms": {
+          "field": "benchmark.category"
+        }
+      },
+
+      "environment": {
+        "terms": {
+          "field": "benchmark.environment"
         }
       },
 
