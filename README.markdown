@@ -11,7 +11,7 @@ export ELASTICSEARCH_REPORT_PASSWORD=...
 export TF_VAR_reporting_url="$ELASTICSEARCH_REPORT_URL"
 export TF_VAR_reporting_password="$ELASTICSEARCH_REPORT_PASSWORD"
 
-export CLIENT_IMAGE="eu.gcr.io/elastic-clients/go-elasticsearch:9c97913f"
+export CLIENT_IMAGE="eu.gcr.io/elastic-clients/go-elasticsearch:0bbf68cb"
 
 cd terraform/gcp
 terraform plan --var client_image="$CLIENT_IMAGE"
@@ -40,7 +40,7 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
 # >  [ping]          1000×     mean=0s runner=success report=success
 # >  ...
 
-export CLIENT_IMAGE="eu.gcr.io/elastic-clients/elasticsearch-ruby:253a0ffc"
+export CLIENT_IMAGE="eu.gcr.io/elastic-clients/elasticsearch-ruby:49028896"
 
 terraform apply --var client_image="$CLIENT_IMAGE"
 
