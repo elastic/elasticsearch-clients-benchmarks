@@ -1,7 +1,7 @@
-resource "google_compute_instance" "server" {
-  name         = "bench-server-${random_id.build.hex}-${random_id.server_instance[count.index].hex}"
-  description  = "bench-server-${format("%03d", count.index + 1)}"
-  machine_type = var.instance_type_server
+resource "google_compute_instance" "target" {
+  name         = "bench-target-${random_id.build.hex}-${random_id.target[count.index].hex}"
+  description  = "bench-target-${format("%03d", count.index + 1)}"
+  machine_type = var.instance_type_target
 
   count = var.node_count
 
@@ -26,18 +26,18 @@ resource "google_compute_instance" "server" {
 
   labels = {
     group         = "bench"
-    role          = "server"
+    role          = "target"
     client_name   = local.client_name
     client_commit = local.client_commit
   }
 
-  metadata_startup_script = templatefile("${path.module}/setup/server/startup.sh.tmpl", {
+  metadata_startup_script = templatefile("${path.module}/setup/target/startup.sh.tmpl", {
     build_id              = random_id.build.hex,
     elasticsearch_version = var.elasticsearch_version,
     client_image          = var.client_image,
     client_name           = local.client_name,
     client_commit         = local.client_commit,
-    server_nr             = count.index + 1,
+    node_nr               = count.index + 1,
     master_ip             = google_compute_address.master.address,
 
     metricbeat_config = data.template_file.metricbeat_config.rendered,
@@ -46,7 +46,7 @@ resource "google_compute_instance" "server" {
 }
 
 data "template_file" "metricbeat_config" {
-  template = file("${path.module}/setup/server/templates/metricbeat.yml")
+  template = file("${path.module}/setup/target/templates/metricbeat.yml")
   vars = {
     build_id                         = random_id.build.hex
     client_name                      = local.client_name
@@ -57,7 +57,7 @@ data "template_file" "metricbeat_config" {
 }
 
 data "template_file" "filebeat_config" {
-  template = file("${path.module}/setup/server/templates/filebeat.yml")
+  template = file("${path.module}/setup/target/templates/filebeat.yml")
   vars = {
     build_id                         = random_id.build.hex
     client_name                      = local.client_name

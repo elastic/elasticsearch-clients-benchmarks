@@ -35,7 +35,7 @@ variable "node_count" {
   default     = 1
 }
 
-variable "instance_type_server" {
+variable "instance_type_target" {
   description = "The instance type for Elasticsearch nodes"
   default     = "n2-standard-4"
 }
@@ -70,7 +70,7 @@ locals {
   client_commit = regex(".+:([[:alnum:]]+)", local.client_image_name)[0]
 
   cluster_urls = [
-    for instance in google_compute_instance.server :
+    for instance in google_compute_instance.target :
     "http://${instance.network_interface.0.network_ip}:9200"
   ]
 }

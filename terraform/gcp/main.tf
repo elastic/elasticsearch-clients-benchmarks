@@ -8,7 +8,7 @@ resource "random_id" "build" {
   byte_length = 8
 }
 
-resource "random_id" "server_instance" {
+resource "random_id" "target" {
   count       = var.node_count
   byte_length = 8
 }

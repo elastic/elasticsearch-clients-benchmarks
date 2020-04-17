@@ -26,23 +26,23 @@ output "runner_instance_name" {
   value = google_compute_instance.runner.name
 }
 
-output "server_public_ips" {
+output "target_public_ips" {
   value = [
-    for instance in google_compute_instance.server :
+    for instance in google_compute_instance.target :
     instance.network_interface.0.access_config.0.nat_ip
   ]
 }
 
-output "server_private_ips" {
+output "target_private_ips" {
   value = [
-    for instance in google_compute_instance.server :
+    for instance in google_compute_instance.target :
     instance.network_interface.0.network_ip
   ]
 }
 
-output "server_instance_names" {
+output "target_instance_names" {
   value = [
-    for instance in google_compute_instance.server :
+    for instance in google_compute_instance.target :
     instance.name
   ]
 }

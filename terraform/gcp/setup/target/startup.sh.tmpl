@@ -76,13 +76,12 @@ chown -R elasticsearch:elasticsearch /home/elasticsearch/*
 su - elasticsearch -c '
   ES_JAVA_OPTS="-Xms4g -Xmx4g -Des.enforce.bootstrap.checks=true" \
     /home/elasticsearch/elasticsearch-${elasticsearch_version}/bin/elasticsearch \
-      -E node.name=es-${format("%03d", server_nr)} \
+      -E node.name=es-${format("%03d", node_nr)} \
       -E cluster.name=bench-${build_id} \
       -E cluster.initial_master_nodes=${master_ip} \
       -E discovery.seed_hosts=${master_ip} \
       -E network.host=_local_,_site_ \
       -E path.data=/mnt/disks/data/elasticsearch/ \
       -E bootstrap.memory_lock=true \
-      --pidfile=/home/elasticsearch/es-${format("%03d", server_nr)}.pid
+      --pidfile=/home/elasticsearch/es-${format("%03d", node_nr)}.pid
       --daemonize'
-
