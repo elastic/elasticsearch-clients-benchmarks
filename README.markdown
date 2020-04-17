@@ -28,9 +28,10 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
   --zone='europe-west1-b' \
   --ssh-flag='-t' \
   --command="sudo su - runner -c '\
-  docker run -it --rm \
+  docker run -i --rm \
     --env CLIENT_BRANCH=master \
     --env ELASTICSEARCH_REPORT_URL=$ELASTICSEARCH_REPORT_URL \
+    --env CLIENT_BENCHMARK_ENVIRONMENT=production \
     --volume /home/runner/environment.sh:/environment.sh \
     --volumes-from \"benchmarks-data\" \
     $CLIENT_IMAGE \
@@ -48,9 +49,10 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
   --zone='europe-west1-b' \
   --ssh-flag='-t' \
   --command="sudo su - runner -c '\
-  docker run -it --rm \
+  docker run -i --rm \
     --env CLIENT_BRANCH=master \
     --env ELASTICSEARCH_REPORT_URL=$ELASTICSEARCH_REPORT_URL \
+    --env CLIENT_BENCHMARK_ENVIRONMENT=production \
     --volume /home/runner/environment.sh:/environment.sh \
     --volumes-from \"benchmarks-data\" \
     $CLIENT_IMAGE \
