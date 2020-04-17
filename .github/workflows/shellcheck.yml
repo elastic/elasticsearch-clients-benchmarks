@@ -1,0 +1,25 @@
+# See: https://github.com/koalaman/shellcheck/wiki/Recursiveness
+
+name: 'Shellcheck'
+
+on:
+  push:
+    branches:
+      - github-actions
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  GITHUB_ACTIONS: true
+
+jobs:
+  shellcheck:
+    name: 'Shellcheck'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Check
+        run: find . -name '*.sh' | xargs shellcheck
