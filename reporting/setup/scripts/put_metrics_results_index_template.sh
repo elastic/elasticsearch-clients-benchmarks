@@ -4,7 +4,7 @@ if [[ -z $ELASTICSEARCH_URL ]]; then
   echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_URL] not set\033[0m"; exit 1
 fi
 
-if [[ ! -z $FORCE ]]; then
+if [[ -n $FORCE ]]; then
   curl -ksS -X DELETE "$ELASTICSEARCH_URL/_template/metrics-results?pretty"
   curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
   curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_stop?pretty"
@@ -78,7 +78,7 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
 }
 '
 
-if [[ ! -z $FORCE ]]; then
+if [[ -n $FORCE ]]; then
   curl -ksS -X PUT "$ELASTICSEARCH_URL/metrics-results?pretty"
   curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_start?pretty"
 fi
