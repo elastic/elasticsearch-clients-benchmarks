@@ -24,7 +24,7 @@ resource "google_compute_instance" "runner" {
     client_commit = local.client_commit
   }
 
-  metadata_startup_script = templatefile("${path.module}/setup/runner/startup.sh", {
+  metadata_startup_script = templatefile("${path.module}/setup/runner/startup.sh.tmpl", {
     build_id = random_id.build.hex,
 
     data_source = "/benchmarks-data",
