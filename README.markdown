@@ -1,5 +1,8 @@
 # Elasticsearch Clients Benchmarks
 
+[![Terraform](https://github.com/elastic/elasticsearch-clients-benchmarks/workflows/Terraform/badge.svg)](https://github.com/elastic/elasticsearch-clients-benchmarks/actions?query=workflow%3ATerraform)
+[![Shellcheck](https://github.com/elastic/elasticsearch-clients-benchmarks/workflows/Shellcheck/badge.svg)](https://github.com/elastic/elasticsearch-clients-benchmarks/actions?query=workflow%3AShellcheck)
+
 ## Create the infrastructure and run client benchmarks
 
 ```bash
