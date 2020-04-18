@@ -60,8 +60,8 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-intake?pretty" -H 'Content-
           "build_id": { "type": "keyword" },
           "category": { "type": "keyword" },
           "environment": { "type": "keyword" },
-          "repetitions": { "type": "long", "index": false },
-          "operations":  { "type": "long", "index": false },
+          "repetitions": { "type": "long", "null_value": 1, "index": false },
+          "operations":  { "type": "long", "null_value": 1, "index": false },
           "runner": {
             "properties": {
               "os": {

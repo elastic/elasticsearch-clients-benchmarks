@@ -68,8 +68,12 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
         }
       },
 
+      "reps_per_sec": {
+        "type": "double"
+      },
+
       "ops_per_sec": {
-        "type": "integer"
+        "type": "double"
       },
 
       "tags" : { "type" : "keyword" }

@@ -19,6 +19,13 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
   "dest": {
     "index": "metrics-results"
   },
+  "frequency": "1m",
+  "sync": {
+    "time": {
+      "field": "@timestamp",
+      "delay": "60s"
+    }
+  },
   "pivot": {
     "group_by": {
       "@timestamp": {
@@ -110,19 +117,23 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
           "field": "event.duration"
         }
       },
-      "ops_per_sec": {
+      "reps_per_sec": {
         "scripted_metric": {
           "init_script": "state.total_duration = 0.0; state.total_repetitions = 0.0",
-          "map_script": "state.total_duration += params['_source']['event']['duration'];  state.total_repetitions += 1",
+          "map_script": "state.total_duration += params['_source']['event']['duration']; state.total_repetitions += 1",
            "combine_script" : "return state.total_repetitions / (state.total_duration / 1e9)",
-           "reduce_script" : "double ops_per_sec = 0; for (s in states) { ops_per_sec += s } return ops_per_sec"
+           "reduce_script" : "double reps_per_sec = 0; for (s in states) { reps_per_sec += s } return reps_per_sec"
+        }
+      },
+      "ops_per_sec": {
+          "scripted_metric": {
+            "init_script": "state.total_duration = 0.0; state.total_operations = 0.0",
+            "map_script": "state.total_duration += params['_source']['event']['duration']; int ops = 0; if (params['_source']['benchmark']['operations'] == null) { ops = 1 } else { ops = params['_source']['benchmark']['operations'] } state.total_operations += ops",
+             "combine_script" : "return state.total_operations / (state.total_duration / 1e9)",
+             "reduce_script" : "double ops_per_sec = 0; for (s in states) { ops_per_sec += s } return ops_per_sec"
+          }
         }
       }
-    }
-  },
-  "sync": {
-    "time": {
-      "field": "@timestamp"
     }
   }
 }
