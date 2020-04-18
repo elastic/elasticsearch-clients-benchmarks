@@ -61,6 +61,7 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-intake?pretty" -H 'Content-
           "category": { "type": "keyword" },
           "environment": { "type": "keyword" },
           "repetitions": { "type": "long", "index": false },
+          "operations":  { "type": "long", "index": false },
           "runner": {
             "properties": {
               "os": {
