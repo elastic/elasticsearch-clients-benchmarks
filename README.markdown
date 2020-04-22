@@ -14,7 +14,7 @@ export ELASTICSEARCH_REPORT_PASSWORD=...
 export TF_VAR_reporting_url="$ELASTICSEARCH_REPORT_URL"
 export TF_VAR_reporting_password="$ELASTICSEARCH_REPORT_PASSWORD"
 
-export CLIENT_IMAGE="eu.gcr.io/elastic-clients/go-elasticsearch:0bbf68cb"
+export CLIENT_IMAGE="eu.gcr.io/elastic-clients/go-elasticsearch:0db2532f"
 
 cd terraform/gcp
 terraform plan --var client_image="$CLIENT_IMAGE"
@@ -33,18 +33,18 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
   --command="sudo su - runner -c '\
   docker run -i --rm \
     --env CLIENT_BRANCH=master \
-    --env ELASTICSEARCH_REPORT_URL=$ELASTICSEARCH_REPORT_URL \
     --env CLIENT_BENCHMARK_ENVIRONMENT=production \
+    --env ELASTICSEARCH_REPORT_URL=$ELASTICSEARCH_REPORT_URL \
     --volume /home/runner/environment.sh:/environment.sh \
     --volumes-from \"benchmarks-data\" \
     $CLIENT_IMAGE \
-    /bin/sh -c \"source /environment.sh && cd _benchmarks/runner && go run main.go\"'"
+    /bin/sh -c \"source /environment.sh && cd _benchmarks/benchmarks && go run cmd/main.go\"'"
 
 # > Running benchmarks for go-elasticsearch@8.0.0-SNAPSHOT; linux/go1.14
 # >  [ping]          1000×     mean=0s runner=success report=success
 # >  ...
 
-export CLIENT_IMAGE="eu.gcr.io/elastic-clients/elasticsearch-ruby:49028896"
+export CLIENT_IMAGE="eu.gcr.io/elastic-clients/elasticsearch-ruby:7a069e0e"
 
 terraform apply --var client_image="$CLIENT_IMAGE"
 
@@ -59,7 +59,7 @@ gcloud compute --project 'elastic-clients' ssh $(terraform output runner_instanc
     --volume /home/runner/environment.sh:/environment.sh \
     --volumes-from \"benchmarks-data\" \
     $CLIENT_IMAGE \
-    /bin/sh -c \". /environment.sh && cd /elasticsearch-ruby/benchmarks && bundle exec ruby run.rb\"'"
+    /bin/sh -c \". /environment.sh && cd /elasticsearch-ruby/benchmarks && bundle exec ruby bin/run.rb\"'"
 
 # > Running benchmarks for elasticsearch-ruby@8.0.0.pre
 # >  [ping]          1000x     mean=1ms runner=success report=success
