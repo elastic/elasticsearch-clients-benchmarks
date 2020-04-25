@@ -31,38 +31,22 @@ resource "google_compute_instance" "target" {
     client_commit = local.client_commit
   }
 
-  metadata_startup_script = templatefile("${path.module}/setup/target/startup.sh.tmpl", {
-    build_id              = random_id.build.hex,
-    elasticsearch_version = var.elasticsearch_version,
-    client_image          = var.client_image,
-    client_name           = local.client_name,
-    client_commit         = local.client_commit,
-    node_nr               = count.index + 1,
-    master_ip             = google_compute_address.master.address,
-
-    metricbeat_config = data.template_file.metricbeat_config.rendered,
-    filebeat_config   = data.template_file.filebeat_config.rendered,
-  })
+  metadata_startup_script = module.setup_target.startup_scripts[count.index]
 }
 
-data "template_file" "metricbeat_config" {
-  template = file("${path.module}/setup/target/templates/metricbeat.yml")
-  vars = {
-    build_id                         = random_id.build.hex
-    client_name                      = local.client_name
-    reporting_elasticsearch_url      = var.reporting_url
-    reporting_elasticsearch_username = var.reporting_username
-    reporting_elasticsearch_password = var.reporting_password
-  }
-}
+module "setup_target" {
+  source = "../modules/setup/target"
 
-data "template_file" "filebeat_config" {
-  template = file("${path.module}/setup/target/templates/filebeat.yml")
-  vars = {
-    build_id                         = random_id.build.hex
-    client_name                      = local.client_name
-    reporting_elasticsearch_url      = var.reporting_url
-    reporting_elasticsearch_username = var.reporting_username
-    reporting_elasticsearch_password = var.reporting_password
-  }
+  elasticsearch_version = var.elasticsearch_version
+  node_count            = var.node_count
+  master_ip             = google_compute_address.master.address
+
+  build_id      = random_id.build.hex
+  client_name   = local.client_name
+  client_image  = var.client_image
+  client_commit = local.client_commit
+
+  reporting_url      = var.reporting_url
+  reporting_username = var.reporting_username
+  reporting_password = var.reporting_password
 }
