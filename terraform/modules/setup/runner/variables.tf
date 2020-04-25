@@ -73,3 +73,18 @@ variable "cloud_machine_type" {
   type        = string
   description = "The instance type of the service"
 }
+
+variable "reporting_url" {
+  type        = string
+  description = "Full URL for the reporting Elasticsearch cluster, including username:password"
+}
+
+variable "reporting_username" {
+  type        = string
+  description = "Username for authenticating to the reporting Elasticsearch cluster"
+}
+
+variable "reporting_password" {
+  type        = string
+  description = "Password for authenticating to the reporting Elasticsearch cluster"
+}

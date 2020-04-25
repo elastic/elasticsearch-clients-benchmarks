@@ -20,5 +20,18 @@ data "template_file" "startup_script" {
     cloud_zone          = var.cloud_zone
     cloud_instance_name = var.cloud_instance_name
     cloud_machine_type  = var.cloud_machine_type
+
+    reporting_elasticsearch_url      = var.reporting_url
+    reporting_elasticsearch_username = var.reporting_username
+    reporting_elasticsearch_password = var.reporting_password
+
+    runner_script = data.template_file.runner_script.rendered
+  }
+}
+
+data "template_file" "runner_script" {
+  template = file("${path.module}/scripts/runner.sh.tmpl")
+  vars = {
+    client_image = var.client_image
   }
 }

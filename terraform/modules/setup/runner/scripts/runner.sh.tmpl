@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [[ "$#" -lt 1 ]]; then
+  echo -e "ERROR: Missing argument with the command"; exit 1
+fi
+
+source /home/runner/environment.sh
+
+cmd="$*"
+
+sudo su - runner -c "\
+source /home/runner/environment.sh && \
+docker run -it --rm \
+  --env CLIENT_BRANCH=$CLIENT_BRANCH \
+  --env CLIENT_BENCHMARK_ENVIRONMENT=$CLIENT_BENCHMARK_ENVIRONMENT \
+  --volume /home/runner/environment.sh:/environment.sh \
+  --volume /home/runner/commit.json:/commit.json \
+  --volumes-from 'benchmarks-data' \
+  '${client_image}' \
+  /bin/sh -c '$cmd'"

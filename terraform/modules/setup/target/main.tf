@@ -7,9 +7,9 @@ data "template_file" "startup_script" {
     client_image  = var.client_image
     client_commit = var.client_commit
 
-    node_nr = count.index + 1
+    node_nr               = count.index + 1
     elasticsearch_version = var.elasticsearch_version
-    master_ip = var.master_ip
+    master_ip             = var.master_ip
 
     metricbeat_config = data.template_file.metricbeat_config.rendered
     filebeat_config   = data.template_file.filebeat_config.rendered

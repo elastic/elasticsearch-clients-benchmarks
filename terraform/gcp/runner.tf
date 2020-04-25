@@ -51,4 +51,8 @@ module "setup_runner" {
   cloud_zone          = var.instance_zone
   cloud_instance_name = local.runner_instance_name
   cloud_machine_type  = var.instance_type_runner
+
+  reporting_url      = var.reporting_url
+  reporting_username = var.reporting_username
+  reporting_password = var.reporting_password
 }
