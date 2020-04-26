@@ -90,6 +90,11 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
         }
       },
 
+      "target.type": {
+        "terms": {
+          "field": "benchmark.target.service.type"
+        }
+      },
       "target.name": {
         "terms": {
           "field": "benchmark.target.service.name"

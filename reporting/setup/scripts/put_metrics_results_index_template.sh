@@ -57,7 +57,18 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
       },
 
       "target": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "keyword"
+          },
+          "type": {
+            "type": "keyword"
+          },
+          "version": {
+            "type": "keyword"
+          }
+        }
       },
 
       "duration" : {
