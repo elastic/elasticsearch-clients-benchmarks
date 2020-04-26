@@ -1,0 +1,20 @@
+metricbeat.modules:
+  - module: system
+    metricsets: ["core", "cpu", "load", "diskio", "memory", "network", "process", "socket"]
+    period: 10s
+  - module: nginx
+    metricsets: ["stubstatus"]
+    hosts: ["http://localhost:9200"]
+    period: 10s
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_labels: { labels: { build_id: '${build_id}' } }
+
+tags: ['bench', 'gcp', '${client_name}']
+
+output.elasticsearch:
+  hosts:    ["${reporting_elasticsearch_url}"]
+  username: '${reporting_elasticsearch_username}'
+  password: '${reporting_elasticsearch_password}'

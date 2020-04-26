@@ -11,10 +11,16 @@ data "template_file" "startup_script" {
     elasticsearch_version = var.elasticsearch_version
     master_ip             = var.master_ip
 
+    nginx_config = data.local_file.nginx_config.content
+
     metricbeat_config = data.template_file.metricbeat_config.rendered
     filebeat_config   = data.template_file.filebeat_config.rendered
   }
   count = var.node_count
+}
+
+data "local_file" "nginx_config" {
+  filename = "${path.module}/nginx/config/nginx.conf"
 }
 
 data "template_file" "metricbeat_config" {

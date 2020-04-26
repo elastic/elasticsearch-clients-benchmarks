@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+sudo su -
+
+# ----- Add the "nginx" user
+useradd -d /home/nginx -k /etc/skel -m -s /bin/bash -U nginx
+echo "Defaults:nginx !requiretty" > /etc/sudoers.d/nginx
+echo "nginx ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers.d/nginx
+
+# ----- Configure system limits
+swapoff -a
+sysctl -w vm.swappiness=1
+sysctl -w fs.file-max=262144
+sysctl -w vm.max_map_count=262144
+cat >> /etc/security/limits.conf <<EOF
+nginx - memlock unlimited
+nginx - nofile  500000
+nginx - nproc   unlimited
+EOF
+
+# ----- Prune the SSH welcome messages
+chmod -x /etc/update-motd.d/*
+chmod +x /etc/update-motd.d/00*
+
+# ----- Install Docker
+apt-get install --yes apt-transport-https ca-certificates gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt-get install --yes docker-ce docker-ce-cli containerd.io
+
+# ----- Install, configure and start Metricbeat
+curl -fsSL -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-${elasticsearch_version}-amd64.deb
+dpkg -i metricbeat-${elasticsearch_version}-amd64.deb
+rm -f metricbeat-${elasticsearch_version}-amd64.deb
+
+cat > /etc/metricbeat/metricbeat.yml <<EOF
+${metricbeat_config}
+EOF
+
+service metricbeat start
+
+# ----- Install, configure and start Filebeat
+curl -fsSL -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${elasticsearch_version}-amd64.deb
+dpkg -i filebeat-${elasticsearch_version}-amd64.deb
+rm -f filebeat-${elasticsearch_version}-amd64.deb
+
+cat > /etc/filebeat/filebeat.yml <<EOF
+${filebeat_config}
+EOF
+
+service filebeat start
+
+# ----- Install, configure and start Nginx
+echo "deb http://nginx.org/packages/mainline/ubuntu $(lsb_release -cs) nginx" | tee /etc/apt/sources.list.d/nginx.list
+curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
+apt update
+apt install nginx --yes
+
+cat > /etc/nginx/nginx.conf <<-'EOF'
+${nginx_config}
+EOF
+
+systemctl start nginx

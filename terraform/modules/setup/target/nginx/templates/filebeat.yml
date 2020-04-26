@@ -1,0 +1,18 @@
+filebeat.modules:
+  - module: system
+    syslog: { var: { paths: ["/var/log/syslog*"] }}
+  - module: nginx
+    access: { paths: ["/var/log/nginx/access.log"] }
+    error:  { paths: ["/var/log/nginx/error.log"] }
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_labels: { labels: { build_id: '${build_id}' } }
+
+tags: ['bench', 'gcp', '${client_name}']
+
+output.elasticsearch:
+  hosts: ["${reporting_elasticsearch_url}"]
+  username: '${reporting_elasticsearch_username}'
+  password: '${reporting_elasticsearch_password}'
