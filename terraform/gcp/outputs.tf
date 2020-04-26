@@ -46,3 +46,7 @@ output "target_instance_names" {
     instance.name
   ]
 }
+
+output "target_type" {
+  value = var.target_type
+}

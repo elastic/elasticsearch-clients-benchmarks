@@ -18,6 +18,11 @@ variable "client_commit" {
   description = "The client commit SHA1"
 }
 
+variable "target_type" {
+  type        = string
+  description = "The type of the target system (elasticsearch, nginx)"
+}
+
 variable "elasticsearch_version" {
   description = "The Elasticsearch version"
   default     = "7.6.2"

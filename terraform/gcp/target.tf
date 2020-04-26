@@ -12,6 +12,7 @@ resource "google_compute_instance" "target" {
   }
 
   scratch_disk {
+    # count = var.target_type == "nginx" ? 0 : 1 // Do not create local SSD for Nginx
     interface = "NVME"
   }
 
@@ -36,6 +37,8 @@ resource "google_compute_instance" "target" {
 
 module "setup_target" {
   source = "../modules/setup/target"
+
+  target_type = var.target_type
 
   elasticsearch_version = var.elasticsearch_version
   node_count            = var.node_count

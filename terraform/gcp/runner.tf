@@ -41,8 +41,8 @@ module "setup_runner" {
 
   data_source              = "/benchmarks-data"
   target_urls              = join(",", local.cluster_urls)
-  target_service_type      = "elasticsearch"
-  target_service_name      = "elasticsearch"
+  target_service_type      = var.target_type
+  target_service_name      = var.target_type
   target_service_version   = var.elasticsearch_version
   target_service_os_family = split("-", var.instance_image)[0]
 

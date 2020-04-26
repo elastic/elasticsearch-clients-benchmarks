@@ -35,6 +35,17 @@ variable "node_count" {
   default     = 1
 }
 
+variable "target_type" {
+  type        = string
+  description = "The type of the target system (elasticsearch, nginx)"
+  default     = "elasticsearch"
+
+  validation {
+    condition     = contains(["elasticsearch", "nginx"], var.target_type)
+    error_message = "Unsupported target type, must be one of [elasticsearch, nginx]."
+  }
+}
+
 variable "instance_type_target" {
   description = "The instance type for Elasticsearch nodes"
   default     = "n2-standard-4"
@@ -73,4 +84,6 @@ locals {
     for instance in google_compute_instance.target :
     "http://${instance.network_interface.0.network_ip}:9200"
   ]
+
+  target_types = ["elasticsearch", "nginx"]
 }

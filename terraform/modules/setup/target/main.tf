@@ -1,5 +1,5 @@
 data "template_file" "startup_script" {
-  template = file("${path.module}/scripts/startup.sh.tmpl")
+  template = file("${path.module}/${var.target_type}/scripts/startup.sh.tmpl")
   vars = {
     build_id = var.build_id
 
@@ -18,7 +18,7 @@ data "template_file" "startup_script" {
 }
 
 data "template_file" "metricbeat_config" {
-  template = file("${path.module}/templates/metricbeat.yml")
+  template = file("${path.module}/${var.target_type}/templates/metricbeat.yml")
   vars = {
     build_id = var.build_id
 
@@ -35,7 +35,7 @@ data "template_file" "metricbeat_config" {
 }
 
 data "template_file" "filebeat_config" {
-  template = file("${path.module}/templates/filebeat.yml")
+  template = file("${path.module}/${var.target_type}/templates/filebeat.yml")
   vars = {
     build_id = var.build_id
 
