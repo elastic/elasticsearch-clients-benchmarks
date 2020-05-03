@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 if [[ -z $ELASTICSEARCH_URL ]]; then
   echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_URL] not set\033[0m"; exit 1
 fi
 
-if [[ -n $FORCE ]]; then
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/_template/metrics-results?pretty"
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
-  curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_stop?pretty"
+if [[ -n $DEBUG ]]; then
+  flags="-i"
+else
+  flags="-f"
 fi
 
-curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content-Type: application/json' -d'
+if [[ -n $FORCE ]]; then
+  curl $flags -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_stop?pretty"
+  curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/_template/metrics-results?pretty"
+fi
+
+curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content-Type: application/json' -d'
 {
   "index_patterns": [
     "metrics-results*"
@@ -92,8 +99,3 @@ curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-results?pretty" -H 'Content
   }
 }
 '
-
-if [[ -n $FORCE ]]; then
-  curl -ksS -X PUT "$ELASTICSEARCH_URL/metrics-results?pretty"
-  curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_start?pretty"
-fi

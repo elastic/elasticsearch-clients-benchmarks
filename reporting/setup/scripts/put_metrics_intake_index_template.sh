@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 if [[ -z $ELASTICSEARCH_URL ]]; then
   echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_URL] not set\033[0m"; exit 1
 fi
 
-if [[ -n $FORCE ]]; then
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-intake-*?pretty"
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/_template/metrics-intake?pretty"
+if [[ -n $DEBUG ]]; then
+  flags="-i"
+else
+  flags="-f"
 fi
 
-curl -k -X PUT "$ELASTICSEARCH_URL/_template/metrics-intake?pretty" -H 'Content-Type: application/json' -d'
+if [[ -n $FORCE ]]; then
+  curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-intake-*?pretty"
+  curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/_template/metrics-intake?pretty"
+fi
+
+curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_template/metrics-intake?pretty" -H 'Content-Type: application/json' -d'
 {
   "index_patterns": [
     "metrics-intake*"

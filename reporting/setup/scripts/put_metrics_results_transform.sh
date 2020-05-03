@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 if [[ -z $ELASTICSEARCH_URL ]]; then
   echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_URL] not set\033[0m"; exit 1
 fi
 
-if [[ -n $FORCE ]]; then
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/_transform/metrics-results?force=true&pretty"
-  curl -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
+if [[ -n $DEBUG ]]; then
+  flags="-i"
+else
+  flags="-f"
 fi
 
-curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Content-Type: application/json' -d @-<<EOF
+if [[ -n $FORCE ]]; then
+  curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/_transform/metrics-results?force=true&pretty"
+  curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
+fi
+
+curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Content-Type: application/json' -d @-<<EOF
 {
   "source": {
     "index": [
@@ -23,7 +31,7 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
   "sync": {
     "time": {
       "field": "@timestamp",
-      "delay": "60s"
+      "delay": "10s"
     }
   },
   "pivot": {
@@ -144,5 +152,8 @@ curl -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -H 'Cont
 }
 EOF
 
-curl -ksS -X PUT "$ELASTICSEARCH_URL/metrics-results?pretty"
-curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_start?pretty"
+if [[ -n $FORCE ]]; then
+  curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/metrics-intake-test?pretty"
+  curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/metrics-results?pretty"
+  curl -ksS -X POST "$ELASTICSEARCH_URL/_transform/metrics-results/_start?pretty" # Do NOT exit with an error (when "metrics-intake-*" doesn't exist)
+fi

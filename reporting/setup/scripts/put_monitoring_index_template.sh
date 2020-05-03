@@ -5,11 +5,19 @@
 #       which is not the case in the reporting cluster.
 #       See: https://www.elastic.co/guide/en/elasticsearch/reference/current/configuring-metricbeat.html
 
+set -eo pipefail
+
 if [[ -z $ELASTICSEARCH_URL ]]; then
   echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_URL] not set\033[0m"; exit 1
 fi
 
-curl -k -X PUT "$ELASTICSEARCH_URL/_template/.monitoring-es?pretty" -H 'Content-Type: application/json' -d'
+if [[ -n $DEBUG ]]; then
+  flags="-i"
+else
+  flags="-f"
+fi
+
+curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_template/.monitoring-es?pretty" -H 'Content-Type: application/json' -d'
 {
   "order": 0,
   "index_patterns": [
