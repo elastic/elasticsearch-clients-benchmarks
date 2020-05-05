@@ -25,7 +25,8 @@ data "template_file" "startup_script" {
     reporting_elasticsearch_username = var.reporting_username
     reporting_elasticsearch_password = var.reporting_password
 
-    runner_script = data.template_file.runner_script.rendered
+    runner_script     = data.template_file.runner_script.rendered
+    instance_lifetime = var.instance_lifetime
   }
 }
 

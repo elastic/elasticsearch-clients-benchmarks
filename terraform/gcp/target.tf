@@ -33,6 +33,10 @@ resource "google_compute_instance" "target" {
   }
 
   metadata_startup_script = module.setup_target.startup_scripts[count.index]
+
+  service_account {
+    scopes = ["userinfo-email", "storage-ro", "compute-rw"]
+  }
 }
 
 module "setup_target" {
@@ -52,4 +56,6 @@ module "setup_target" {
   reporting_url      = var.reporting_url
   reporting_username = var.reporting_username
   reporting_password = var.reporting_password
+
+  instance_lifetime = var.instance_lifetime
 }

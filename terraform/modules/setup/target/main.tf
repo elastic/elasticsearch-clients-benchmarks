@@ -15,6 +15,8 @@ data "template_file" "startup_script" {
 
     metricbeat_config = data.template_file.metricbeat_config.rendered
     filebeat_config   = data.template_file.filebeat_config.rendered
+
+    instance_lifetime = var.instance_lifetime
   }
   count = var.node_count
 }

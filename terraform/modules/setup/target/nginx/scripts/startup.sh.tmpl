@@ -2,6 +2,16 @@
 
 sudo su -
 
+# ----- Create a self-destruct script
+cat > /tmp/self-destruct.sh <<'EOF'
+sleep ${instance_lifetime}
+NAME=$(curl -sS http://metadata.google.internal/computeMetadata/v1/instance/name -H 'Metadata-Flavor: Google')
+ZONE=$(curl -sS http://metadata.google.internal/computeMetadata/v1/instance/zone -H 'Metadata-Flavor: Google')
+echo "Destroying instance [$NAME]"
+gcloud --quiet compute instances delete $NAME --zone=$ZONE
+EOF
+nohup bash -c 'bash /tmp/self-destruct.sh' | logger -t self-destruct &
+
 # ----- Add the "nginx" user
 useradd -d /home/nginx -k /etc/skel -m -s /bin/bash -U nginx
 echo "Defaults:nginx !requiretty" > /etc/sudoers.d/nginx

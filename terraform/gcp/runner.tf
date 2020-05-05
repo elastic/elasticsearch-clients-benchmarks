@@ -27,7 +27,7 @@ resource "google_compute_instance" "runner" {
   metadata_startup_script = module.setup_runner.startup_script
 
   service_account {
-    scopes = ["userinfo-email", "storage-ro"]
+    scopes = ["userinfo-email", "storage-ro", "compute-rw"]
   }
 }
 
@@ -55,4 +55,6 @@ module "setup_runner" {
   reporting_url      = var.reporting_url
   reporting_username = var.reporting_username
   reporting_password = var.reporting_password
+
+  instance_lifetime = var.instance_lifetime
 }

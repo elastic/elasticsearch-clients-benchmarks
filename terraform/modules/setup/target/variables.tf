@@ -53,3 +53,8 @@ variable "reporting_password" {
   type        = string
   description = "Password for authenticating to the reporting Elasticsearch cluster"
 }
+
+variable "instance_lifetime" {
+  description = "The maximum lifetime for the instance; it will self-destruct afterwards"
+  default     = "2h"
+}

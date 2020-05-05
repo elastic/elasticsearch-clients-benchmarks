@@ -71,6 +71,11 @@ variable "instance_zone" {
   default     = "europe-west1-b"
 }
 
+variable "instance_lifetime" {
+  description = "The maximum lifetime for the instance; it will self-destruct afterwards"
+  default     = "2h"
+}
+
 locals {
   runner_instance_name = "bench-runner-${random_id.build.hex}-${random_id.runner.hex}"
 
