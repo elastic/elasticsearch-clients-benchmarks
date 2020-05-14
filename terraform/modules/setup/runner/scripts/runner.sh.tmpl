@@ -13,7 +13,7 @@ sudo su - runner -c "\
 gcloud auth configure-docker eu.gcr.io --quiet && \
 gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io && \
 source /home/runner/environment.sh && \
-docker run -it --rm \
+docker run --rm \
   --env CLIENT_BRANCH=$CLIENT_BRANCH \
   --env CLIENT_BENCHMARK_ENVIRONMENT=$CLIENT_BENCHMARK_ENVIRONMENT \
   --volume /home/runner/environment.sh:/environment.sh \
