@@ -26,7 +26,7 @@ variable "reporting_password" {
 
 variable "elasticsearch_version" {
   description = "The Elasticsearch version"
-  default     = "7.6.2"
+  default     = "7.7.0"
 }
 
 variable "node_count" {
