@@ -48,12 +48,12 @@ variable "target_type" {
 
 variable "instance_type_target" {
   description = "The instance type for Elasticsearch nodes"
-  default     = "n2-standard-4"
+  default     = "n2-standard-8"
 }
 
 variable "instance_type_runner" {
   description = "The instance type for the client runner"
-  default     = "n2-standard-2"
+  default     = "n2-standard-4"
 }
 
 variable "instance_image" {

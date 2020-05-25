@@ -84,7 +84,7 @@ chown -R elasticsearch:elasticsearch /home/elasticsearch/*
 
 # ----- Start Elasticsearch
 su - elasticsearch -c '
-  ES_JAVA_OPTS="-Xms4g -Xmx4g -Des.enforce.bootstrap.checks=true" \
+  ES_JAVA_OPTS="-Xms15g -Xmx15g -Des.enforce.bootstrap.checks=true" \
     /home/elasticsearch/elasticsearch-${elasticsearch_version}/bin/elasticsearch \
       -E node.name=es-${format("%03d", node_nr)} \
       -E cluster.name=bench-${build_id} \
