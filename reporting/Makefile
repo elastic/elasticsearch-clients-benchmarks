@@ -19,14 +19,14 @@ status:
 wait_for_elasticsearch:
 	@{ \
 		printf "Waiting for Elasticsearch..."; \
-		until docker inspect elasticsearch > /dev/null 2>&1 && [[ `docker inspect -f '{{ .State.Health.Status }}' elasticsearch` == "healthy" ]]; do printf '.'; sleep 5; done; \
+		until docker inspect elasticsearch-reporting > /dev/null 2>&1 && [[ `docker inspect -f '{{ .State.Health.Status }}' elasticsearch-reporting` == "healthy" ]]; do printf '.'; sleep 5; done; \
 		echo ""; \
 	}
 
 wait_for_kibana:
 	@{ \
 		printf "Waiting for Kibana..."; \
-		until docker inspect kibana > /dev/null 2>&1 && [[ `docker inspect -f '{{ .State.Health.Status }}' kibana` == "healthy" ]]; do printf '.'; sleep 5; done; \
+		until docker inspect kibana-reporting > /dev/null 2>&1 && [[ `docker inspect -f '{{ .State.Health.Status }}' kibana-reporting` == "healthy" ]]; do printf '.'; sleep 5; done; \
 		echo ""; \
 	}
 

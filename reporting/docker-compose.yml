@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   elasticsearch:
-    container_name: elasticsearch
+    container_name: elasticsearch-reporting
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     volumes:
       - es-data:/usr/share/elasticsearch/data
@@ -11,12 +11,12 @@ services:
     ports:
       - 29200:9200
     environment:
-      - node.name=elasticsearch
+      - node.name=elasticsearch-reporting
       - cluster.name=client-benchmarks-reporting
-      - cluster.initial_master_nodes=elasticsearch
-      - discovery.seed_hosts=elasticsearch
-      - network.host=elasticsearch,_local_
-      - network.publish_host=elasticsearch
+      - cluster.initial_master_nodes=elasticsearch-reporting
+      - discovery.seed_hosts=elasticsearch-reporting
+      - network.host=elasticsearch-reporting,_local_
+      - network.publish_host=elasticsearch-reporting
       - bootstrap.memory_lock=true
       - ES_JAVA_OPTS=-Xms${ES_MEMORY} -Xmx${ES_MEMORY}
     ulimits: { nofile: { soft: 65535, hard: 65535 }, memlock: -1 }
@@ -24,7 +24,7 @@ services:
       test: curl --head --max-time 120 --retry 120 --retry-delay 1 --show-error --silent http://localhost:9200
 
   kibana:
-    container_name: kibana
+    container_name: kibana-reporting
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     depends_on: ['elasticsearch']
     networks:
