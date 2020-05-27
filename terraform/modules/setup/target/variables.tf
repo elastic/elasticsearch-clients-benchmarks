@@ -56,5 +56,5 @@ variable "reporting_password" {
 
 variable "instance_lifetime" {
   description = "The maximum lifetime for the instance; it will self-destruct afterwards"
-  default     = "2h"
+  default     = "5h"
 }
