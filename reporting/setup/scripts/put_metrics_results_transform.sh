@@ -22,7 +22,14 @@ curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -
   "source": {
     "index": [
       "metrics-intake*"
-    ]
+    ],
+    "query": {
+      "term": {
+        "event.outcome": {
+          "value": "success"
+        }
+      }
+    }
   },
   "dest": {
     "index": "metrics-results"
