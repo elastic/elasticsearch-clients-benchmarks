@@ -51,7 +51,8 @@ curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_template/metrics-intake?pretty" -H 
         "properties": {
           "action": { "type": "keyword" },
           "duration": { "type": "long", "index": false },
-          "dataset": { "type": "keyword" }
+          "dataset": { "type": "keyword" },
+          "outcome": { "type": "keyword", "null_value": "unknown" }
         }
       },
       "http": {
