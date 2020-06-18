@@ -37,6 +37,8 @@ ifndef DEBUG
 endif
 	@{ \
 		export ELASTICSEARCH_URL=http://localhost:29200; \
+		export TRANSFORM_FREQUENCY=10s; \
+		export TRANSFORM_DELAY=0s; \
 		\
 		for command in $(commands); do \
 			if [[ -n $$DEBUG ]]; then \

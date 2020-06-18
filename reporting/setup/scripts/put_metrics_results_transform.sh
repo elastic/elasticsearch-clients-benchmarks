@@ -12,6 +12,9 @@ else
   flags="-f"
 fi
 
+TRANSFORM_FREQUENCY=${TRANSFORM_FREQUENCY:-15m}
+TRANSFORM_DELAY=${TRANSFORM_DELAY:-15m}
+
 if [[ -n $FORCE ]]; then
   curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/_transform/metrics-results?force=true&pretty"
   curl $flags -ksS -X DELETE "$ELASTICSEARCH_URL/metrics-results?pretty"
@@ -34,11 +37,11 @@ curl $flags -ksS -X PUT "$ELASTICSEARCH_URL/_transform/metrics-results?pretty" -
   "dest": {
     "index": "metrics-results"
   },
-  "frequency": "1m",
+  "frequency": "$TRANSFORM_FREQUENCY",
   "sync": {
     "time": {
       "field": "@timestamp",
-      "delay": "10s"
+      "delay": "$TRANSFORM_DELAY"
     }
   },
   "pivot": {
