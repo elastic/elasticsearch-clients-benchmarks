@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Elasticsearch Clients Benchmarks</title>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="assets/d3.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
+  <style type="text/css">
+    html {
+      position: relative;
+      min-height: 100%;
+    }
+    body {
+      color: #222;
+      background: #fcfcfc;
+      font-family: 'Open Sans', sans-serif;
+      margin: 1em 2em 3em 2em;
+      -webkit-font-kerning: normal;
+    }
+    svg text { font-family: 'Open Sans', sans-serif; }
+    body.loading {
+      background: #fcfcfc url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAAA1CAMAAADlL44OAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJZQTFRF7Ozs7+/v+vr6+Pj47e3t2NjY9/f3/f399PT09fX19vb2+fn58vLy5ubm8fHx4eHh6enp7u7u6urq5+fn5eXl4uLi8PDw6+vr4+Pj39/f5OTk3d3d6Ojo4ODg3t7e2dnZ29vb1tbW1dXVz8/P3Nzc1NTU0NDQ0tLS0dHR2tra09PTy8vL19fXzs7O8/Pz+/v7/Pz8////Ad+HXwAAADJ0Uk5T/////////////////////////////////////////////////////////////////wANUJjvAAAG0ElEQVR42uya25qjKBCAFYyi4jnnc3q6e2b2APj+L7eGQgXFdE86sxe74aK/hGBRP1QVRdlO/d9szpPryfXkenI9uf4fXAFvmpgYFXAUo2uLEbcO4M1vg6elwK4Ji8y2G0YG0wO0JlDf+Ce4Al9cW2yDQkhojcdoNATh6y++PpESqD1nKtJPqD7xgVjoNibjMTdlxij4gIu7ciAdj0ADWVdxw1UkshtFug6uGDeEhr/TfmRoSoVuFvaKIItE607oXI4c5Y42K7YJ46Y0DlyCaaunBI7IxGjCbmRkCpXdjLWKYKu8eBncwyU6adg7HBZe+xVhfVSkVtLHH3IJjie5UDzNxfv19RJNk8S9Z786J0lefsyOh93sx9kbgwWknZKMuP78dm1/z3YJMZfEwmVaosHF2wXNz++X102jyfe3LG++r6N7uBQWOZ0rl0V+xIrtX2eYAveuEketYpQPudbutXnV4vzHkejbYuMyLFHnEmqG9HTaeiz0G03cPJu9ZNuVuIMLAVd6mbNW4ThdzAAsCsyoMYgcpkCOw2Lxlilz5VNcuiXqXAqrms0p6l2Eleu9X9/BBQrj80o3fD95NS1RyGG5/EuCekpggN3jRnRLYuVqRNm4YljJ6lyY8eozcd7ChULZN8/Nk8Xf5kb0g6ix2UqN43paYECyOawUHnPlQ0vsuZT/hrtU/HK+YeMCrPAwdE220aOfmvV1Y0YOm8CA7cJ21JBrkQ3ctufC4A5HT9SP4AoohMJiuNc8h6DItKhR5kloGJLVsINi28aXIdd+Rk237blg4Yp5XD+EC6UQ0cauySqIJ0HvhFuyrIzIYQ+weA3K+yOuVX5UUWXIJdT6pvVjuCImD/R8vPs4AS7eRY0wQf5C28TJA9HxVPo05KK0SgxL7Lgwg5XDD+Ji0qxTy4EuSuC6zuTLWJUsa7GSKhN0M4Fhe9m9HHExEh5C3RI7rlAauusED+ICM9wzy1Nu2uWkrDNWAsEuvMnlQ9xzxYiLiQIsEfkmF5ihR+sHcUGavbIlKpTCEjdOKM3QLRtjRXO5dVTc4ophqx0+5qrjedKf2333UnaW4WO5HNuJzlgbq8B0KrmYrrQx7N/iQs40V002IM4PdK6RHsh6QXgoF8QqDD4drbXIMcHFb3EZljjJJVKdK4x+BxdEjZUnfZrvwTzRvVyNJeadJU5ymTcgxn4HF0QNj0DBgaZ95LiLqyZH3Frib+aiVi4fRCJiuzoyccO/QGo5wSWcrE2qB1xU4zrOru2S3Me1lKsf2eIQ7EtOQuuVGPs34jzs8CqwczUJCfRHoo+Hcja/yzyDaJVc2+JOLjpZyum4qP2uz6a5iLzPM7ee4KrZTl3v4rabeQM9VAWPrO7jCkstCzSdRB3ZVKpAPK3hNnJM5FFguCWd5BLOASwx7PIN0IMOA7rv3MelskAyTqMj6V7hHvBOL7OuvVXtLWoi71U3xGiSq7HEAmTM2/wwEdq5+HUunod6YjRadGclfSXMUtY1b9FeOe33FHVDTNA0V02VJZbtGVmCuZPgMVx1WolRGVdbdOXhTcqrhTu4hfnYzuX3xbFpLl7OVfVVddO5pbb3BS5/gfu0RsvmoYriJtRyP1sq47VeVGPIgMIM3+Kqo6wwjie8DYclsC9xCS9RgVsHE2rRs5Wk9kphrgVw8bHArsa6cYObXEG6wzpXUKhClgl2N1ftZ3RUkEeq8Lqt4BiYm3KFU8K1GQ0E9gXbLInrm1ydJbbdWFWKzDcDv8JFkdHcV9y9ueDwukh93x8oRI354DWIuoUxrAmMkVblPyyi+gMuzRKhmx1p/wpF1tYEQr7/ea5Bo/uzvdxf7SiRzpKPEqW5dIaQ2OvzeLcIgw+5gnRjcIniXIiJHOAeriLcX2wCF7sUQUK0GKWPLjjl0iqwumzDoP6Qq0b7raE2935mD+RyUOycNsPktrw0fgdFPbccXet8uIWl+Uhamr3sHDzxnmigX3Sghto8PVwSi4YkJx9wud6ouQ6vOV2/nNb9Vc7LXs5lFNSEFZ5XzMerJVb75tGiSAyBi2z2/XJY9W9MYMJ0qT4VjqlfsNwUnt4dROXrS5ZrboG9xfHtUuGbXGK5mY3aZimudfVldby8v107Tu8/ZllJuLwcN99fS0utMtqeZrNzkusCT7ss8aivbS5MmIXq08+hfmi1m5ndPFxlpz++nUDg+7fvs926TPHt93o1CtmohW3NLKLuqmquBnvHZVio0/k6wPo+GhPGiI91gSTCwxfjcsJIqE9kpJ/83ewWmKReLi8pjSYpi2Lx5f9zmHhp/+83wT+jyfP/Up5cT64n15ML2j8CDADPQYrKmDieRQAAAABJRU5ErkJggg==') 50% 50% no-repeat;
+    }
+    body.loading * {
+      opacity: 0.25;
+    }
+    body.loading > header,
+    body.error > header,
+    body.error > footer,
+    body.loading > footer,
+    body.error .panel {
+      display: none;
+    }
+    div.error {
+      color: #bd271e;
+    }
+    div.error p {
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0 0 4px 24px;
+      background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjYmQyNzFlIiBkPSJNNy41OSAxMC4wNTlMNy4zNSA1LjE4aDEuM0w4LjQgMTAuMDZoLS44MXptLjM5NCAxLjkwMWEuNjEuNjEgMCAwMS0uNDQ4LS4xODYuNjA2LjYwNiAwIDAxLS4xODYtLjQ0NGMwLS4xNzQuMDYyLS4zMjMuMTg2LS40NDZhLjYxNC42MTQgMCAwMS40NDgtLjE4NGMuMTY5IDAgLjMxNS4wNi40NC4xODIuMTI0LjEyMi4xODYuMjcuMTg2LjQ0OGEuNi42IDAgMDEtLjE4OS40NDYuNjA3LjYwNyAwIDAxLS40MzcuMTg0ek0yIDE0YTEgMSAwIDAxLS44NzgtMS40NzlsNi0xMWExIDEgMCAwMTEuNzU2IDBsNiAxMUExIDEgMCAwMTE0IDE0SDJ6bTAtMWgxMkw4IDIgMiAxM3oiPjwvcGF0aD48L3N2Zz4=') 0 50% no-repeat;
+      border-bottom: 1px solid #bd271e;
+    }
+    header {
+      color: #444;
+      width: 600px;
+      margin: 0 0 20px 0;
+    }
+    header h1 {
+      font-weight: 100;
+      font-size: 26px;
+      padding: 0; margin: 0 0 0.25em 0;
+    }
+    header p {
+      font-weight: 100;
+      font-size: 12px;
+      padding: 0; margin: 0 0 0.15em 0;
+    }
+    footer {
+      color: rgba(34, 34, 34, 0.41);
+      font-size: 12px;
+      line-height: 140%;
+      margin: 1em 0 2em 0;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    footer section {
+      width: 600px;
+      padding: 0 10px 0 2px;
+      margin: 0 12px 0 0;
+    }
+    footer h2 {
+      font-weight: 100;
+      text-transform: uppercase;
+    }
+    footer p {
+      margin: 0 0 0.25em 0;
+    }
+    footer ul {
+      margin: 3px 0 0 0;
+      padding: 0;
+      list-style-type: none;
+    }
+    footer ul li {
+      padding: 0;
+      margin: 0 6px 0 0;
+      display: inline-block;
+    }
+    footer ul li:before {
+      content: "→";
+      margin: 0 2px 0 0;
+    }
+    footer a {
+      color: rgba(34, 34, 34, 0.41);
+      text-decoration: underline;
+    }
+    footer code {
+      white-space: nowrap;
+    }
+    a {
+      color: #006BB4;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    #container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    svg text {
+      font-family: 'Inter', 'Open Sans', sans-serif;
+    }
+    .panel-title {
+      text-align: right;
+      margin-right: 20px;
+    }
+    .panel-title * {
+      margin: 0; padding: 0;
+    }
+    .panel-title small {
+      color: #b3b3b3;
+      font-size: 10px;
+      font-weight: 100;
+      text-transform: uppercase;
+    }
+    .panel-title span {
+      color: #444;
+      font-weight: 200;
+      text-transform: capitalize;
+    }
+    .panel {
+      background: #fff;
+      padding: 10px 5px 0px 5px;
+      margin: 0 10px 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+    .tick line {
+      stroke: #ccc;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
+    .tick text {
+      color: #999;
+      font-size: 8px !important;
+    }
+    path.domain {
+      stroke: #999;
+    }
+    .callout line {
+      stroke: #222;
+      stroke-width: 2;
+      shape-rendering: crispEdges;
+    }
+    .callout .date tspan {
+      font-weight: 600;
+    }
+    .callout .annotation {
+      font-size: 10px;
+      fill: #999;
+    }
+  </style>
+</head>
+<body class="loading">
+  <header>
+    <h1>Elasticsearch Clients Benchmarks</h1>
+    <p>
+      Displaying the number of operations executed per second by the
+      <a href="https://www.elastic.co/guide/en/elasticsearch/client/index.html">official Elasticsearch clients</a>.
+    </p>
+  </header>
+  <div id="container"></div>
+  <footer>
+    <section>
+      <h2>The Configuration</h2>
+      <p>The aim of the benchmarks is to demonstrate the "out-of-the-box" experience in different programming languages and platforms. Therefore, the clients are running with their default configurations, with only minimal adjustments to match common production settings.</p>
+      <p>You can find more information in the respective repository README documents.</p>
+      <ul>
+        <li><a href="https://github.com/elastic/elasticsearch-js/tree/benchmarking/test/benchmarks">elasticsearch-js</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-py/tree/benchmarks/benchmarking">elasticsearch-py</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-ruby/tree/benchmarks/benchmarks">elasticsearch-ruby</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-rs/tree/benchmarks/benchmarks">elasticsearch-rs</a></li>
+        <li><a href="https://github.com/elastic/go-elasticsearch/tree/benchmarks/_benchmarks">go-elasticsearch</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>The Environment</h2>
+      <p>The operations are run against a single-node Elasticsearch 7.7.0 cluster installed from <code>tar.gz</code> on a&nbsp;<code>n2-standard-8</code> GCP instance (8&nbsp;vCPUs/32GB&nbsp;RAM), with 15GB of RAM locked for heap and a&nbsp;local SSD formatted as <code>ext4</code> on the NVMe interface.</p>
+      <p>The&nbsp;client code is executed in a Docker container on a&nbsp;<code>n2-standard-4</code> GCP instance (4&nbsp;vCPUs/16GB&nbsp;RAM). Both environments use Ubuntu 18.04.4&nbsp;LTS (<code>5.0.0-1031-gcp</code>).</p>
+    </section>
+  </footer>
+</body>
+<script>
+  var width = 600;
+  var height = 200;
+  var margin = { top: 20, right: 20, bottom: 20, left: 20 };
+
+  var annotations = {
+    // Up to three annotations per day, less than 50 characters per annotation
+    "2020-04-27": ["Spike in Go throughput by mistake"],
+    "2020-05-13": ["Set Python maxsize=1"],
+    "2020-05-25": ["Upgrade GCP instances to bigger types", "Upgrade Elasticsearch to 7.7.0"],
+    "2020-05-26": ["Increase number of measured repetitions for Go", "Remove Python maxsize=1"],
+    "2020-05-27": ["Use default number of sockets in Node.js"],
+    "2020-05-28": ["Fix reporting of event outcome in JavaScript"]
+  };
+
+  var getClientColor = function(name) {
+    // Color coding from GitHub;
+    var colors = {
+      "c++": "#f34b7d",
+      "go": "#00ADD8",
+      "javascript": "#f1e05a",
+      "php": "#4F5D95",
+      "python": "#3572A5",
+      "ruby": "#701516",
+      "rust": "#dea584"
+    };
+
+    switch (name) {
+      case "elasticsearch-js":
+        return colors["javascript"];
+      case "elasticsearch-py":
+        return colors["python"];
+      case "elasticsearch-ruby":
+        return colors["ruby"];
+      case "elasticsearch-rs":
+        return colors["rust"];
+      case "go-elasticsearch":
+        return colors["go"];
+    }
+
+    throw(`Unsupported client name [${name}]`)
+  };
+
+  var getActionOrder = function(name) {
+    switch (name) {
+      case "ping":        return 1
+      case "info":        return 2
+      case "get":         return 3
+      case "index":       return 4
+      case "bulk":        return 5
+      case "bulk-helper": return 6
+    }
+
+    throw(`Unsupported action name [${name}]`)
+  };
+
+  var getMetricForAction = function(actionName, bucket) {
+    return bucket.ops_per_sec.values["50.0"]
+  };
+
+  var chart = function(container, json) {
+    var actionNames = [];
+    var clientNames = [];
+    var data = { timeline: [], actions: [] }
+
+    // Extract action and client names
+    //
+    json.aggregations.timeline.buckets.forEach(function(d) {
+      d.action.buckets.forEach(function(a) {
+        if (!actionNames.find(e => e === a.key)) { actionNames.push(a.key); }
+        a.client_name.buckets.forEach(function(c) {
+          if (!clientNames.find(e => e === c.key)) { clientNames.push(c.key) }
+        })
+      })
+    });
+    actionNames.sort(function(a,b) { return getActionOrder(a) - getActionOrder(b) });
+    clientNames.sort();
+
+    // Extract and convert the timeline
+    //
+    json.aggregations.timeline.buckets.forEach(function(d) {
+      data.timeline.push(d3.isoParse(d.key_as_string))
+    });
+
+    // Extract the series (actions and clients)
+    //
+    json.aggregations.timeline.buckets.forEach(function(d) {
+      actionNames.forEach(function(actionName) {
+        const actionBucket = d.action.buckets.find(b => b.key === actionName);
+        var actionItem = data.actions.find(i => i.name === actionName);
+
+        if (!actionItem) {
+          actionItem = { name: actionName, series: [] }
+          data.actions.push(actionItem)
+        }
+
+        clientNames.forEach(function(clientName) {
+          var value = NaN;
+          var serieItem = actionItem.series.find(i => i.name === clientName)
+
+          if (!serieItem) {
+            serieItem = { name: clientName, values: [] }
+            actionItem.series.push(serieItem)
+          }
+
+          if (actionBucket) {
+            const clientBucket = actionBucket.client_name.buckets.find(b => b.key === clientName)
+
+            if (clientBucket) {
+              value = getMetricForAction(actionName, clientBucket)
+            }
+          }
+
+          serieItem.values.push(value)
+        })
+      })
+    });
+
+    // Compute maximum value across action series
+    //
+    data.actions.forEach(function(a) {
+      var maxValue = d3.max(a.series.map(function(s) { return s.values }).flat());
+      a.maxValue = maxValue
+      a.series.forEach(function(s) {
+        s.maxValue = maxValue
+      })
+    });
+
+    // console.log("data:", data);
+
+    // Container
+    //
+    const chartContainer = container.selectAll("div.chart")
+      .data(data.actions)
+      .join("div")
+      .attr("class", d => `panel ${d.name}`);
+
+    // Panel title
+    //
+    const chartTitle = chartContainer.append("div").attr("class", "panel-title").append("p");
+    chartTitle.append("small").text("API ");
+    chartTitle.append("span").text(d => d.name);
+
+    // Panel chart
+    //
+    const chart = chartContainer.append("div").attr("class", "chart");
+
+    // SVG
+    //
+    const svg = chart.append("svg")
+      .attr("viewBox", [0, 0, width, height])
+      .attr("width", width)
+      .attr("height", height)
+      .attr("fill", "none")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round");
+
+    // x-Scale
+    //
+    const x = d3.scaleUtc()
+      .domain(d3.extent(data.timeline, d => d))
+      .range([margin.left, width - margin.right]);
+
+    // y-Scale
+    //
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data.actions.map(d => d.maxValue))]).nice() // Default upper range
+      .range([height - margin.bottom, margin.top]);
+
+    // x-Axis
+    //
+    const xAxis = function(g) {
+      g.attr("class", "ticks-x")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(
+          d3.axisBottom(x).ticks(width/80).tickSizeOuter(0)
+        );
+    };
+
+    // y-Axis
+    //
+    const yAxis = function(g) {
+      g.attr("class", "ticks-y")
+        .attr("transform", `translate(${margin.left},0)`)
+        .each(function(d) {
+          d3.select(this).call(
+            d3.axisLeft(y.domain([0, d.maxValue]).nice())
+            .ticks(5)
+            .tickSize(-(width - margin.left - margin.right))
+            .tickFormat(d3.format("~s"))
+          )
+        })
+        .call(g => g.select(".domain").remove())
+        .call(g => g.select(".tick:first-of-type text").remove())
+        .call(g => g.selectAll(".tick:not(:first-of-type) line")
+          .attr("stroke-width", 0.1)
+          .attr("stroke-opacity", 0.5))
+        .call(g => g.select(".tick:last-of-type text").clone()
+          .attr("x", 3)
+          .attr("text-anchor", "start")
+          .attr("font-weight", "bold")
+          .text(data.y));
+    };
+
+    // Dashed lines
+    //
+    var previousValues = {};
+    const lineDashed = d3.line()
+      .x(function(d, i) {
+        return x(data.timeline[i])
+      })
+      .y(function(d, i) {
+        if (isNaN(d.value)) {
+          if (previousValues[d.key]) {
+            return y(previousValues[d.key]);
+          } else {
+            return y(0);
+          }
+        }
+        previousValues[d.key] = d.value;
+        return y(d.value);
+      })
+      .curve(d3.curveMonotoneX);;
+
+    // Solid lines
+    //
+    const lineSolid = d3.line()
+      .defined(d => !isNaN(d))
+      .x((d, i) => x(data.timeline[i]))
+      .y(d => y(d))
+      .curve(d3.curveMonotoneX);
+
+    // The x-tick width (used as a width of the clipping rectangle)
+    //
+    var tick_width = function() {
+      tickArr = x.ticks()
+      difference = x(data.timeline[1]) - x(data.timeline[0])
+      return Math.round(difference)
+    }()
+
+    // Axes
+    //
+    svg.append("g").call(xAxis);
+    svg.append("g").call(yAxis);
+
+    // Dashed lines (missing data)
+    //
+    svg.append("g")
+      .attr("class", "dashed")
+      .selectAll("g")
+      .data(function(d) { return d.series.map(function(e) { e.action = d.name; return e }) })
+      .join("g")
+      .attr("id", d => [d.name, "dashed"].join("__"))
+      .append("path")
+      .attr("stroke-width", 0.5)
+      .attr("stroke", "#ccc")
+      .attr("stroke-dasharray", 1)
+      .attr("d", function(d) {
+        y.domain([0, d.maxValue]).nice();
+        var key = [d.name, d.action].join('---');
+        return lineDashed(d.values.map(function(v) { return { key: key, value: v } }));
+      });
+
+    // Solid lines
+    //
+    svg.append("g")
+      .attr("class", "solid")
+      .selectAll("g")
+      .data(d => d.series)
+      .join("g")
+      .attr("id", d => [d.name, "solid"].join("__"))
+      .append("path")
+      .attr("stroke-width", 2)
+      .attr("stroke", (d,i) => getClientColor(d.name))
+      .attr("d", function(d) { y.domain([0, d.maxValue]).nice(); return lineSolid(d.values) });
+
+    // Callout
+    //
+    var g = svg.append("g")
+      .attr("class", "callout")
+      .style("display", "none")
+      .style("pointer-events", "none")
+      .style("font-size", "11px");
+
+      g.append("rect")
+        .attr("width", 250)
+        .attr("height", height-margin.bottom-5)
+        .attr("y", -5)
+        .attr("rx", 4)
+        .attr("fill", "#fff")
+        .attr("opacity", 0.8);
+
+      g.append("line")
+        .attr("x1", 0)
+        .attr("y1", 0)
+        .attr("x2", 0)
+        .attr("y2", height-margin.bottom-5)
+        .attr("stroke-width", 1)
+        .attr("stroke", "#000");
+
+      g.append("text")
+        .attr("class", "date")
+        .attr("fill", "#666")
+        .attr("transform", "translate(6,8)")
+        .append("tspan");
+
+      var t = g.append("text")
+        .attr("class", "value")
+        .attr("fill", "#666")
+        .attr("transform", "translate(6,24)");
+
+      t.selectAll("tspan")
+        .data(clientNames)
+        .join("tspan")
+        .attr("x", 0)
+        .attr("y", (d, i) => `${i * 1.25}em`)
+        .attr("fill", (d, i) => getClientColor(d));
+
+      g.append("text")
+        .attr("class", "annotation")
+        .attr("transform", `translate(5,${height*0.65})`);
+
+    // Interactivity
+    //
+    svg.on("mousemove", function() {
+      var callout = d3.selectAll(".callout");
+
+      var mx = d3.mouse(this)[0];
+      var date = x.clamp(true).invert(mx);
+      var index = data.timeline.findIndex(function(d) {
+        d.setUTCHours(0,0,0,0); date.setUTCHours(0,0,0,0);
+        return d.toUTCString() == date.toUTCString();
+      });
+
+      callout
+        .style("display", "block")
+        .attr("transform", `translate(${Math.round(x(date))},${margin.top/2})`);
+
+      callout
+        .select("text.date tspan")
+        .text(date.toLocaleString("en", { month: "short", day: "numeric" }));
+
+      callout
+        .selectAll("text.value tspan")
+        .data(d => d.series)
+        .text(function(d) {
+          var v = d.values[index];
+          var value = ""
+          if (isNaN(v)) {
+            value = "N/A"
+          } else {
+            value = v.toLocaleString("en", { maximumSignificantDigits: 3 }) + " ops/sec"
+          }
+          return `${d.name}: ${value}`;
+        });
+
+      callout
+        .select("text.annotation")
+        .selectAll("tspan")
+        .data(() => annotations[d3.timeFormat("%Y-%m-%d")(date)] || [])
+        .join("tspan")
+        .attr("x", 0)
+        .attr("y", (d, i) => `${height - height*0.65 - 37 - i * 13}`)
+        .text(d => d);
+
+
+      if (mx > width*0.58) {
+        callout.selectAll("rect").attr("transform", "translate(-250, 0)");
+        callout.selectAll("text.date").attr("transform", "translate(-6,8)");
+        callout.selectAll("text.value").attr("transform", "translate(-6,24)");
+        callout.selectAll("text.annotation").attr("transform", `translate(-5,${height*0.65})`);
+        callout.selectAll("text").attr("text-anchor", "end");
+      } else {
+        callout.selectAll("rect").attr("transform", "translate(0, 0)");
+        callout.selectAll("text.date").attr("transform", "translate(6,8)");
+        callout.selectAll("text.value").attr("transform", "translate(6,24)");
+        callout.selectAll("text.annotation").attr("transform", `translate(5,${height*0.65})`);
+        callout.selectAll("text").attr("text-anchor", "start");
+      }
+    });
+
+    svg.on("mouseleave", function() {
+      d3.selectAll(".callout").style("display", "none");
+    });
+
+    return svg.node();
+  }
+
+  var dataURL = "/api";
+  if (window.location.href.includes("elastic.co")) {
+    dataURL = "https://europe-west3-elastic-clients.cloudfunctions.net/clients-benchmarks-proxy";
+  }
+
+  d3.json(dataURL)
+    .then(function(data) {
+      chart(d3.select("#container"), data);
+      d3.select("body").attr("class", "loaded");
+    })
+    .catch(function(error) {
+      d3.select("body").attr("class", "error");
+      var err = d3.select("#container").append("div").attr("class", "error").lower();
+      err.append("p").text("An error occured when loading the application")
+      err.append("pre").text(error.toString());
+    });
+</script>
+</html>
