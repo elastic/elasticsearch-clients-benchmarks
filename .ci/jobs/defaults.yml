@@ -62,7 +62,7 @@
           # export GITHUB_TOKEN=$(vault read -field=github_token secret/kibana-issues/dev/kibanamachine)
           unset VAULT_ROLE_ID VAULT_SECRET_ID VAULT_ADDR VAULT_TOKEN VAULT_ACCOUNT
 
-          pull_request_id={ghprbPullId}
+          export pull_request_id={ghprbPullId}
           echo "DEBUG:  pull request ID = $pull_request_id"
 
           # Run deploy script, set in the template parameter
