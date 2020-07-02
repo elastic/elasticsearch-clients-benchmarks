@@ -1,0 +1,9 @@
+---
+- job:
+    name: elasticsearch-clients-benchmarks+deploy-docs
+    display-name: "elasticsearch clients benchmarks - deploy to site"
+    description: Deploy web/public to Bekitzur bucket
+    scm:
+      - git:
+          refspec: +refs/heads/*:refs/remotes/origin/*
+    triggers: []
