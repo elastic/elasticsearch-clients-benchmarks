@@ -1,0 +1,70 @@
+---
+
+##### GLOBAL METADATA
+
+- meta:
+    cluster: clients-ci
+
+##### JOB DEFAULTS
+
+- job:
+    logrotate:
+      daysToKeep: 30
+      numToKeep: 100
+    properties:
+      - github:
+          url: https://github.com/elastic/elasticsearch-clients-benchmarks/
+      - inject:
+          properties-content: |-
+            CI=true
+            HOME=$JENKINS_HOME
+    concurrent: true
+    node: linux && !oraclelinux
+    scm:
+      - git:
+          name: origin
+          credentials-id: f6c7695a-671e-4f4f-a331-acdce44ff9ba
+          reference-repo: /var/lib/jenkins/.git-references/elasticsearch-clients-benchmarks.git
+          branches:
+            - $branch_specifier
+          url: git@github.com:elastic/elasticsearch-clients-benchmarks.git
+          refspec: +refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/*
+          basedir: ''
+          wipe-workspace: 'True'
+    parameters:
+      - string:
+          name: branch_specifier
+          default: refs/heads/master
+          description: the Git branch specifier to build (&lt;branchName&gt;,
+            &lt;tagName&gt;, &lt;commitId&gt;, etc.)
+    wrappers:
+      - ansicolor
+      - timeout:
+          type: absolute
+          timeout: 180
+          fail: true
+      - timestamps
+    publishers:
+      - email:
+          # TODO:  Change this to some proper group
+          recipients: karel.minarik@elastic.co
+    vault:
+      role_name: auth/approle/role/bekitzur-clients-team
+    builders:
+      - shell: |-
+          #!/usr/local/bin/runbld
+          set -eo pipefail
+          VAULT_ACCOUNT=secret/gce/elastic-bekitzur/service-account/clients-team
+          export VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")
+          export GCE_ACCOUNT=$(vault read -field=value "$VAULT_ACCOUNT")
+
+          # TODO: Figure out the right GitHub access token so that this script can publish to the pull request
+          # export GITHUB_TOKEN=$(vault read -field=github_token secret/kibana-issues/dev/kibanamachine)
+          unset VAULT_ROLE_ID VAULT_SECRET_ID VAULT_ADDR VAULT_TOKEN VAULT_ACCOUNT
+
+          export pull_request_id={ghprbPullId}
+          echo "DEBUG:  pull request ID = $pull_request_id"
+
+          # Run deploy script, set in the template parameter
+          # Expects env: GCE_ACCOUNT, GIT_BRANCH, GITHUB_TOKEN (opt), pull_request (opt)
+          ./web/deploy
