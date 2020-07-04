@@ -10,8 +10,10 @@ install: ## Install development dependencies
 
 ##@ Deployment
 deploy-web: ## Deploy the website
-	@printf "\033[31mERROR: Not implemented yet\033[0m\n"
-	@exit 2
+	@{ \
+		set -eu; \
+		bin/deploy.sh; \
+	}
 
 deploy-api: ## Deploy the API to Google Cloud Functions
 	@{ \

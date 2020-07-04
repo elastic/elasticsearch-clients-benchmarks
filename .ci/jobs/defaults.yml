@@ -67,4 +67,4 @@
 
           # Run deploy script, set in the template parameter
           # Expects env: GCE_ACCOUNT, GIT_BRANCH, GITHUB_TOKEN (opt), pull_request (opt)
-          ./web/deploy
+          ./web/bin/deploy.sh

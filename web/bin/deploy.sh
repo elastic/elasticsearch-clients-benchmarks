@@ -23,8 +23,8 @@ set +x
 # This script runs a docker container, where it executes itself to deploy to GCP.
 
 # Usage:
-# * Compile and deploy:          ./web/deploy
-# * Deploy only without docker:  ./web/deploy nodocker
+# * Compile and deploy:          ./web/bin.deploy.sh
+# * Deploy only without docker:  ./web/bin.deploy.sh nodocker
 
 # Expected env variables:
 # * GCE_ACCOUNT - credentials for the google service account (JSON blob)
@@ -83,7 +83,7 @@ if [[ "$1" != "nodocker" ]]; then
     --user="$(id -u):$(id -g)" \
     --workdir /app \
     'google/cloud-sdk:slim' \
-    /app/deploy nodocker "$@"
+    /app/bin/deploy.sh nodocker "$@"
   unset GCE_ACCOUNT
 
   if [[ -n "${pull_request_id:-}" ]]; then
