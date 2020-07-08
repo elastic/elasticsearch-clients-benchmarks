@@ -18,7 +18,6 @@
 #
 
 set -e
-set +x
 
 # This script runs a docker container, where it executes itself to deploy to GCP.
 
@@ -34,6 +33,9 @@ if [[ -z "${GCE_ACCOUNT}" ]]; then
   echo "GCE_ACCOUNT is not set. Expected Google service account JSON blob."
   exit 1
 fi
+
+# https://stackoverflow.com/a/9107028/177275
+WEB_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 post_comment_to_gh()
 {
@@ -61,14 +63,14 @@ publish_to_bucket()
   local full_bucket_path="$1"
   local max_age="$2"
 
-  echo "Copying $PWD/public/* to $full_bucket_path"
+  echo "Copying $WEB_PATH/public/* to $full_bucket_path"
   gsutil -m \
     -h "Cache-Control:public, max-age=$max_age" \
     cp \
     -r \
     -a public-read \
     -z js,css,html \
-    "$PWD/public/*" "$full_bucket_path"
+    "$WEB_PATH/public/*" "$full_bucket_path"
 }
 
 if [[ "$1" != "nodocker" ]]; then
@@ -79,7 +81,7 @@ if [[ "$1" != "nodocker" ]]; then
     --env GCE_ACCOUNT \
     --env pull_request_id \
     --env HOME=/tmp \
-    --volume "$PWD:/app" \
+    --volume "$WEB_PATH:/app" \
     --user="$(id -u):$(id -g)" \
     --workdir /app \
     'google/cloud-sdk:slim' \
