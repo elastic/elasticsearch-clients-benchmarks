@@ -34,6 +34,12 @@ if [[ -z "${GCE_ACCOUNT}" ]]; then
   exit 1
 fi
 
+# In some cases Jenkins might not expand the pull request variable correctly
+# See "export pull_request_id={ghprbPullId}" in /.ci/jobs/defaults.yml
+if [[ "${pull_request_id:-}" == "{ghprbPullId}" ]]; then
+  unset pull_request_id
+fi
+
 # https://stackoverflow.com/a/9107028/177275
 WEB_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
