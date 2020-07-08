@@ -49,7 +49,7 @@
           # TODO:  Change this to some proper group
           recipients: karel.minarik@elastic.co
     vault:
-      role_name: auth/approle/role/bekitzur-clients-team
+      role_name: bekitzur-clients-team
     builders:
       - shell: |-
           #!/usr/local/bin/runbld
