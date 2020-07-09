@@ -48,8 +48,7 @@
       - timestamps
     publishers:
       - email:
-          # TODO:  Change this to some proper group
-          recipients: karel.minarik@elastic.co
+          recipients: clients-team+build@elastic.co
     builders:
       - shell: |-
           #!/usr/local/bin/runbld
