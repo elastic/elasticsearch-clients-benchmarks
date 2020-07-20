@@ -26,6 +26,10 @@ output "runner_instance_name" {
   value = google_compute_instance.runner.name
 }
 
+output "runner_public_ip" {
+  value = google_compute_instance.runner.network_interface.0.access_config.0.nat_ip
+}
+
 output "target_public_ips" {
   value = [
     for instance in google_compute_instance.target :
