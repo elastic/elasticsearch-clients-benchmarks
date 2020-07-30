@@ -56,5 +56,8 @@ module "setup_runner" {
   reporting_username = var.reporting_username
   reporting_password = var.reporting_password
 
+  runner_ssh_private_key = var.runner_ssh_private_key
+  runner_ssh_public_key  = var.runner_ssh_public_key
+
   instance_lifetime = var.instance_lifetime
 }

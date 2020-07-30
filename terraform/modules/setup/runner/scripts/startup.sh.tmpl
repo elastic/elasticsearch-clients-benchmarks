@@ -17,6 +17,18 @@ useradd -d /home/runner -k /etc/skel -m -s /bin/bash -U runner
 echo "Defaults:runner !requiretty" > /etc/sudoers.d/runner
 echo "runner ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers.d/runner
 
+# ----- Add the SSH key for the "runner" user
+mkdir -p /home/runner/.ssh
+%{ if runner_ssh_private_key != "" }
+echo "${runner_ssh_private_key}" > /home/runner/.ssh/id_rsa
+%{ endif }
+%{ if runner_ssh_public_key != "" }
+echo "${runner_ssh_public_key}" > /home/runner/.ssh/id_rsa.pub
+echo "${runner_ssh_public_key}" >> /home/runner/.ssh/authorized_keys
+%{ endif }
+chown -R runner:runner /home/runner/.ssh
+chmod -R go= /home/runner/.ssh
+
 # ----- Configure system limits
 swapoff -a
 sysctl -w vm.swappiness=1

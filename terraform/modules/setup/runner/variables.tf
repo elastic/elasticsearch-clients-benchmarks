@@ -93,3 +93,13 @@ variable "instance_lifetime" {
   description = "The maximum lifetime for the instance; it will self-destruct afterwards"
   default     = "5h"
 }
+
+variable "runner_ssh_private_key" {
+  type        = string
+  description = "Optional private SSH key for the runner user"
+}
+
+variable "runner_ssh_public_key" {
+  type        = string
+  description = "Optional public SSH key for the runner user"
+}
