@@ -180,11 +180,11 @@
       <p>The aim of the benchmarks is to demonstrate the "out-of-the-box" experience in different programming languages and platforms. Therefore, the clients are running with their default configurations, with only minimal adjustments to match common production settings.</p>
       <p>You can find more information in the respective repository README documents.</p>
       <ul>
-        <li><a href="https://github.com/elastic/elasticsearch-js/tree/benchmarking/test/benchmarks">elasticsearch-js</a></li>
-        <li><a href="https://github.com/elastic/elasticsearch-py/tree/benchmarks/benchmarking">elasticsearch-py</a></li>
-        <li><a href="https://github.com/elastic/elasticsearch-ruby/tree/benchmarks/benchmarks">elasticsearch-ruby</a></li>
-        <li><a href="https://github.com/elastic/elasticsearch-rs/tree/benchmarks/benchmarks">elasticsearch-rs</a></li>
-        <li><a href="https://github.com/elastic/go-elasticsearch/tree/benchmarks/_benchmarks">go-elasticsearch</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-js/tree/master/test/benchmarks">elasticsearch-js</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-py/tree/master/benchmarking">elasticsearch-py</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-ruby/tree/master/benchmarks">elasticsearch-ruby</a></li>
+        <li><a href="https://github.com/elastic/elasticsearch-rs/tree/master/benchmarks">elasticsearch-rs</a></li>
+        <li><a href="https://github.com/elastic/go-elasticsearch/tree/master/_benchmarks">go-elasticsearch</a></li>
       </ul>
     </section>
 
@@ -192,6 +192,7 @@
       <h2>The Environment</h2>
       <p>The operations are run against a single-node Elasticsearch 7.7.0 cluster installed from <code>tar.gz</code> on a&nbsp;<code>n2-standard-8</code> GCP instance (8&nbsp;vCPUs/32GB&nbsp;RAM), with 15GB of RAM locked for heap and a&nbsp;local SSD formatted as <code>ext4</code> on the NVMe interface.</p>
       <p>The&nbsp;client code is executed in a Docker container on a&nbsp;<code>n2-standard-4</code> GCP instance (4&nbsp;vCPUs/16GB&nbsp;RAM). Both environments use Ubuntu 18.04.4&nbsp;LTS (<code>5.0.0-1031-gcp</code>).</p>
+      <p>The code for provisioning and setting up the environment is available at <a href="https://github.com/elastic/elasticsearch-clients-benchmarks">GitHub</a>.</p>
     </section>
   </footer>
 </body>
