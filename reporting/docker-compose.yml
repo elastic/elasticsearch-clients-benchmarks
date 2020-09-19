@@ -14,6 +14,7 @@ services:
       - node.name=elasticsearch-reporting
       - cluster.name=client-benchmarks-reporting
       - cluster.initial_master_nodes=elasticsearch-reporting
+      - cluster.routing.allocation.disk.threshold_enabled=false
       - discovery.seed_hosts=elasticsearch-reporting
       - network.host=elasticsearch-reporting,_local_
       - network.publish_host=elasticsearch-reporting
